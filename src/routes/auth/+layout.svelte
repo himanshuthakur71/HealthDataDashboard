@@ -16,7 +16,7 @@
 				</figure>
 			</div>
 
-			<div class="lg:pl-[100px] w-full">
+			<div class="lg:pl-[80px] w-full ">
 				{@render children()}
 			</div>
 		</div>

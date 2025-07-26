@@ -6,7 +6,7 @@
 			</div>
 
 			<div class="navbar-end">
-				<a href="/auth/login" class="btn">Login</a>
+				<a href="/auth/login" class="btn  btn-primary">Login</a>
 			</div>
 		</div>
 	</div>
