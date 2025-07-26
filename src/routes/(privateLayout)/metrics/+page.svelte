@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -12,8 +13,6 @@
 	function formatCustomMetrics(json: any[] = []) {
 		return json.map((m) => `${m.key}: ${m.value} ${m.unit}`).join(', ');
 	}
-
-	const ranges = ['7', '30', '60', '90', '120'];
 </script>
 
 <section class="hms-container py-6">
@@ -23,47 +22,30 @@
 	</div>
 
 	<div class="w-full">
-		<form action="">
+		<form method="GET">
 			<div class="flex w-full gap-[20px]">
 				<label class="w-full max-w-[132px]">
 					<span class=" label-text">Date</span>
-					<select class="select w-full">
+					<select class="select w-full"  name="range">
 						<option value="">Select</option>
-						{#each ranges as r}
+						{#each [7, 30, 60, 90, 120] as r}
 							<option value={r}>Last {r} Days</option>
 						{/each}
 					</select>
 				</label>
 
-				<label class="w-full max-w-[132px]">
-					<span class=" label-text">BP</span>
-					<input type="text" placeholder="Search" class="input w-full" />
-				</label>
-
-				<label class="w-full max-w-[132px]">
-					<span class=" label-text">HR</span>
-					<input type="text" placeholder="Search" class="input w-full" />
-				</label>
-
-				<label class="w-full max-w-[132px]">
-					<span class=" label-text">Glucose</span>
-					<input type="text" placeholder="Search" class="input w-full" />
-				</label>
-
-				<label class="w-full max-w-[132px]">
-					<span class=" label-text">Weight</span>
-					<input type="text" placeholder="Search" class="input w-full" />
-				</label>
-
-				<label class="w-full max-w-[132px]">
-					<span class=" label-text">Temp</span>
-					<input type="text" placeholder="Search" class="input w-full" />
-				</label>
-
-				<label class="w-full max-w-[132px]">
-					<span class=" label-text">Source</span>
-					<input type="text" placeholder="Search" class="input w-full" />
-				</label>
+				{#each ['bp', 'hr', 'glucose', 'weight', 'temp', 'source'] as filter}
+					<label class="w-full max-w-[132px]">
+						<span class="label-text">{filter.toUpperCase()}</span>
+						<input
+							type="text"
+							name={filter}
+							placeholder="Search"
+							class="input w-full"
+							value={page.url.searchParams.get(filter) ?? ''}
+						/>
+					</label>
+				{/each}
 
 				<div class="flex w-full max-w-[132px] items-end justify-end">
 					<button type="submit" class=" btn btn-primary">Search</button>
