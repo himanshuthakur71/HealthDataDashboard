@@ -33,10 +33,11 @@
 		});
 		return () => data.subscription.unsubscribe();
 	});
+
 </script>
 
 <div>
-	{#if !page?.url?.pathname.startsWith('/auth')}
+	{#if !page.url.pathname.startsWith('/auth') && page.url.pathname !== '/signout'}
 		<Navbar />
 	{/if}
 </div>
