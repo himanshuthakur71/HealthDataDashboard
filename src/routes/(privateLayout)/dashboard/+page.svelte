@@ -41,7 +41,7 @@
 
 <section class="w-full">
 	<div class="hms-container">
-		<div class="my-6 flex items-center justify-between">
+		<div class="my-6 flex md:items-center md:justify-between  flex-col md:flex-row gap-y-4">
 			<h1 class="text-3xl font-semibold text-gray-800">
 				Welcome Back,
 				<span class="font-bold text-secondary">{data?.user?.user_metadata?.last_name}</span> 👋

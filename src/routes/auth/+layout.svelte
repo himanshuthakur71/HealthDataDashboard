@@ -10,7 +10,7 @@
 			</a>
 		</header>
 		<div class="flex w-full items-center">
-			<div class=" border-r-[2px] border-[#d7d7d7] py-[87px] pr-[22px]">
+			<div class=" border-r-[2px] border-[#d7d7d7] py-[87px] pr-[22px] hidden lg:block">
 				<figure class="flex h-[342px] w-[427px] items-center justify-center">
 					<img src="/images/normal_u63.jpg" alt="box" class="h-full w-full" />
 				</figure>

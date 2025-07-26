@@ -14,7 +14,7 @@
 			<div class="navbar-end flex items-center gap-4">
 				{#if page?.data?.session?.user?.id}
 
-				<p><a href="/dashboard/profile" class=" text-lg font-semibold text-secondary hover:underline">{page?.data?.session?.user?.user_metadata?.first_name} {page?.data?.session?.user?.user_metadata?.last_name}</a></p>
+				<p class="hidden md:block"><a href="/dashboard/profile" class=" text-lg font-semibold text-secondary hover:underline">{page?.data?.session?.user?.user_metadata?.first_name} {page?.data?.session?.user?.user_metadata?.last_name}</a></p>
 					<div class="dropdown dropdown-end">
 						<div tabindex="0" role="button" class="btn avatar btn-circle btn-ghost">
 							<div class="w-10 rounded-full">
