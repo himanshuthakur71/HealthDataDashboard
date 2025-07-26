@@ -1,7 +1,11 @@
 import type { PageServerLoad } from './$types';
 import { subDays } from 'date-fns';
 
-export const load: PageServerLoad = async ({ locals: { supabase, user }, url }) => {
+export const load: PageServerLoad = async ({ locals: { supabase, user }, url, depends }) => {
+
+
+	depends('supabase:health_metrics')
+
 	if (!user) return { metrics: [] };
 
 	const range = Number(url.searchParams.get('range') || 0);

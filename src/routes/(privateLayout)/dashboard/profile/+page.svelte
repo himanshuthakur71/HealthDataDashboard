@@ -2,6 +2,7 @@
 	import { goto, invalidate } from '$app/navigation';
 	import { deleteAvatar } from '$lib/helpers/deleteAvatar.js';
 	import { uploadAvatarWithProgress } from '$lib/helpers/uploadAvatar.js';
+	import { fade } from 'svelte/transition';
 
 	let { data } = $props();
 	let { supabase } = $derived(data);
@@ -354,7 +355,7 @@
 
 {#if modalSucess}
 	<dialog id="my_modal_1" class="modal-open modal">
-		<div class="modal-box">
+		<div class="modal-box" transition:fade>
 			<figure class="mx-auto mb-[7px] flex h-[50px] w-[45px] items-center justify-center">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"

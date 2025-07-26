@@ -14,10 +14,7 @@ class CustomMetrics {
     }
 
     delete(index: number) {
-        let tempArray = this.attributes
-        tempArray.splice(index, 1);
-        // console.log(tempArray)
-        this.attributes = tempArray
+        this.attributes.splice(index, 1);
     }
 }
 

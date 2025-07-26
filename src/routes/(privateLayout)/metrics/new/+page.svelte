@@ -1,9 +1,11 @@
 <script lang="ts">
-	import { invalidate } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import CustomMetricFrom from '$lib/components/CustomMetricFrom.svelte';
 	import { customMetrics } from '$lib/stores/customMetricStore.svelte';
+	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
 
-	const newCustomMetric = { key: '', value: '', unit: 'ng/mL' }
+	const newCustomMetric = { key: '', value: '', unit: '' };
 
 	let formData = $state({
 		systolic: '',
@@ -12,16 +14,18 @@
 		blood_glucose: '',
 		weight: '',
 		temperature: '',
-		source: '',
-		custom_metrics: [
-			
-		]
+		source: 'manual',
+		custom_metrics: []
 	});
 
-	let message = $state('');
+	let modalSucess = $state(false);
 	let loading = $state(false);
 
-	
+	onMount(() => {
+		if (!customMetrics.attributes?.length) {
+			customMetrics.add(newCustomMetric);
+		}
+	});
 
 	async function handleSubmit(e: Event) {
 		e.preventDefault();
@@ -36,7 +40,7 @@
 			blood_glucose: Number(formData.blood_glucose),
 			weight: Number(formData.weight),
 			temperature: Number(formData.temperature),
-			custom_metrics:  customMetrics.attributes.filter((m) => m.key && m.value && m.unit)
+			custom_metrics: customMetrics.attributes.filter((m) => m.key && m.value && m.unit)
 		};
 
 		const res = await fetch('/api/metrics/new', {
@@ -49,10 +53,9 @@
 		loading = false;
 
 		if (result.success) {
-			message = '✅ Metric submitted successfully!';
-			invalidate('metrics');
+			modalSucess = true;
 		} else {
-			message = `❌ Error: ${result.error}`;
+			alert(`❌ Error: ${result.error}`);
 		}
 	}
 </script>
@@ -72,7 +75,8 @@
 		<p class=" text-lg text-[#7f7f7f]">Create new metrics here.</p>
 	</div>
 
-	<form>
+	<form onsubmit={handleSubmit}>
+		<p class=" mb-2 text-xs text-[#7f7f7f]">(All fields required.)</p>
 		<div class="grid max-w-3xl grid-cols-1 gap-4">
 			<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 				<label class="floating-label">
@@ -154,16 +158,64 @@
 			</div>
 
 			{#each customMetrics.attributes as _, index}
-				<CustomMetricFrom />
+				<CustomMetricFrom {index} />
 			{/each}
 
 			<div class="w-full">
-				<button type="button" class="btn btn-outline" onclick={() => (customMetrics.add(newCustomMetric))}>
-				➕ Add Custom Metric
-			</button>
+				<button
+					type="button"
+					class="btn btn-soft btn-secondary"
+					onclick={() => customMetrics.add(newCustomMetric)}
+				>
+					➕ Add Custom Metric
+				</button>
 			</div>
+		</div>
+
+		<div class="mt-16 flex w-full gap-[30px]">
+			<button type="submit" class="btn btn-wide max-w-[130px] btn-lg btn-primary">Save</button>
+			<a href="/metrics" class="btn btn-wide max-w-[130px] btn-outline btn-lg btn-primary">Cancel</a
+			>
 		</div>
 	</form>
 </section>
 
-
+{#if modalSucess}
+	<dialog id="my_modal_1" class="modal-open modal">
+		<div class="modal-box" transition:fade>
+			<figure class="mx-auto mb-[7px] flex h-[50px] w-[45px] items-center justify-center">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					id="Layer_1"
+					data-name="Layer 1"
+					width="262.5019"
+					height="300"
+					viewBox="0 0 262.5019 300"
+				>
+					<defs>
+						<style>
+							.cls-1 {
+								fill: #21235f;
+							}
+						</style>
+					</defs>
+					<path
+						class="cls-1"
+						d="M256.9172,57.3047c-4.4709-2.0745-9.7811-.8148-12.8438,3.0469-.2519,.334-26.2559,36.0879-112.8223,36.0879-86.0625-.0117-112.2656-35.3789-112.8164-36.0879-3.0011-3.8982-8.2987-5.2038-12.7676-3.1465-4.5469,2.0684-6.7441,6.9375-5.1504,11.3906,.2051,.5859,14.4492,38.6719,55.7461,62.5195v.1348c.0101,41.4214,33.597,74.9918,75.0183,74.9817,41.4071-.0101,74.9716-33.5746,74.9817-74.9817v-.1289c41.2793-23.8945,55.5176-61.9805,55.7285-62.5254,1.5762-4.418-.6035-9.1934-5.0742-11.291Zm-73.1719,167.6953h-9.7793c-27.1069,12.4998-58.3286,12.4998-85.4355,0h-9.7793c-32.438,.0115-61.5201,19.9958-73.1602,50.2734-4.6172,11.9473,4.998,24.7266,17.8125,24.7266H239.0929c12.8145,0,22.4297-12.7793,17.8125-24.7266-11.6401-30.2776-40.7221-50.2619-73.1601-50.2734Zm16.9336-158.4551C194.2043,37.5293,182.1457,0,162.9504,0c-6.0527,0-11.4551,2.6074-15.9961,6.1348-8.9748,6.979-21.5408,6.979-30.5156,0-4.5234-3.5273-9.9434-6.1348-15.9961-6.1348-19.2598,0-31.3359,37.7871-37.7988,66.8438,15.2871,5.8125,37.4063,10.834,68.6074,10.834,31.7402,0,54.1172-5.1797,69.4277-11.1328Z"
+					/>
+				</svg>
+			</figure>
+			<h4 class=" text-center text-3xl font-bold text-primary">User Profile Details</h4>
+			<p class=" text-center text-2xl text-[#7f7f7f]">successfully saved.</p>
+			<div class="modal-action justify-center">
+				<button
+					type="button"
+					onclick={() => {
+						invalidate('supabase:health_metrics').then(() => goto('/metrics'));
+					}}
+					class="btn btn-wide max-w-[150px] btn-lg btn-primary">Continue</button
+				>
+			</div>
+		</div>
+	</dialog>
+{/if}
