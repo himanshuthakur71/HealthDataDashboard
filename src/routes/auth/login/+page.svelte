@@ -70,6 +70,19 @@
 					</div>
 				</form>
 
+				<div class="relative py-4">
+					<div class="absolute inset-0 flex items-center">
+						<span class="w-full border-t border-accent"></span>
+					</div>
+					<div class="relative flex justify-center text-xs uppercase">
+						<span class="bg-base-100 text-[#737373] px-2">Or continue with</span>
+					</div>
+				</div>
+
+				<form action="">
+					<button type="button" class=" btn  w-full">Google</button>
+				</form>
+
 				<p class="mt-[32px]">
 					<a href="/" class=" text-xl font-bold text-secondary hover:underline"
 						>Forgot your password?</a
