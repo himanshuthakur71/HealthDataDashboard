@@ -192,7 +192,7 @@
 					<p class=" text-xl font-bold text-primary">EDIT DETAILS</p>
 					<span class="mt-[6px] block h-[3px] w-[48px] bg-primary"></span>
 				</div>
-				<div class="grid w-full max-w-[820px] grid-cols-[1fr_auto] gap-x-[45px]">
+				<div class="lg:grid w-full max-w-[820px] lg:grid-cols-[1fr_auto] gap-x-[45px] flex flex-col-reverse gap-y-8">
 					<div class="w-full">
 						<div class="grid grid-cols-1 gap-4">
 							<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
