@@ -19,7 +19,16 @@
 <section class="hms-container py-6">
 	<div class="mb-8 flex items-center justify-between">
 		<h2 class="text-3xl font-semibold text-gray-800">📊 Your Health Metrics</h2>
-		<a href="/metrics/new" class="btn btn-lg btn-primary">➕ Add Metric</a>
+
+		<div class="">
+			<details class="dropdown">
+				<summary class="btn m-1 btn-soft btn-primary">➕ Add Metric</summary>
+				<ul class="dropdown-content menu z-1 w-52 rounded-box bg-base-100 p-2 shadow-sm">
+					<li><a href="/metrics/new">Add Manual</a></li>
+					<li><a href="/metrics/new">Upload PDF</a></li>
+				</ul>
+			</details>
+		</div>
 	</div>
 
 	<div class="w-full">
@@ -27,7 +36,7 @@
 			<div class="flex w-full gap-[20px]">
 				<label class="w-full max-w-[132px]">
 					<span class=" label-text">Date</span>
-					<select class="select w-full"  name="range">
+					<select class="select w-full" name="range">
 						<option value="">Select</option>
 						{#each [7, 30, 60, 90, 120] as r}
 							<option value={r}>Last {r} Days</option>
@@ -71,7 +80,7 @@
 				</thead>
 				<tbody>
 					{#each data?.metrics as m (m.id)}
-						<tr class="hover:bg-base-300 cursor-pointer" onclick="{() => goto(`/metrics/${m.id}`)}">
+						<tr class="cursor-pointer hover:bg-base-300" onclick={() => goto(`/metrics/${m.id}`)}>
 							<td class="border-r border-[#f1eeef]">{formatDate(m.created_at)}</td>
 							<td class="border-r border-[#f1eeef]">{m.systolic}/{m.diastolic}</td>
 							<td class="border-r border-[#f1eeef]">{m.heart_rate} bpm</td>
