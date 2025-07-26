@@ -139,7 +139,7 @@
 	const sendHealthReport = async () => {
 		sending = true;
 
-		const res = await fetch('c', {
+		const res = await fetch('/api/gemini', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
