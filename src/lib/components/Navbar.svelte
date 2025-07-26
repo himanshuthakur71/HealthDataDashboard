@@ -31,6 +31,12 @@
 							<li>
 								<a href="/dashboard/profile" class="justify-between"> Profile </a>
 							</li>
+							<li>
+								<a href="/metrics" class="justify-between">My Metrics</a>
+							</li>
+							<li>
+								<a href="/metrics/new" class="justify-between">Create Metrics</a>
+							</li>
 							<li><a href="/auth/logout">Logout</a></li>
 						</ul>
 					</div>
