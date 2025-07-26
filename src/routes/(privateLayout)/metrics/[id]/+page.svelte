@@ -251,7 +251,7 @@
 		<HealthScore score={healthScore} />
 	</div>
 	<div class="relative w-full">
-		<div class=" absolute top-0 right-0 flex flex-col gap-2">
+		<div class=" lg:absolute top-0 right-0 flex flex-col gap-2 max-w-[140px] mb-6 lg:mb-0">
 			<button onclick={() => (modalDelete = true)} type="button" class=" btn btn-error"
 				>Delete Metrics</button
 			>
