@@ -29,15 +29,18 @@
 							class="dropdown-content menu z-1 mt-3 w-52 menu-sm rounded-box bg-base-100 p-2 shadow"
 						>
 							<li>
-								<a href="/dashboard/profile" class="justify-between"> Profile </a>
+								<a href="/dashboard/profile"> Profile </a>
 							</li>
 							<li>
-								<a href="/metrics" class="justify-between">My Metrics</a>
+								<a href="/metrics" >Metrics</a>
 							</li>
+							<!-- <li>
+								<a href="/metrics/new" >Create Metrics</a>
+							</li> -->
 							<li>
-								<a href="/metrics/new" class="justify-between">Create Metrics</a>
+								<a href="/reports">Reports</a>
 							</li>
-							<li><a href="/auth/logout">Logout</a></li>
+							<li><a href="/auth/logout" class=" btn btn-sm btn-error">Logout</a></li>
 						</ul>
 					</div>
 				{:else}
