@@ -1,17 +1,19 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
+	import CustomMetricFrom from '$lib/components/CustomMetricFrom.svelte';
+	import { customMetrics } from '$lib/stores/customMetricStore.svelte';
 
 	let formData = $state({
-		systolic: '120',
-		diastolic: '80',
-		heart_rate: '72',
-		blood_glucose: '95',
-		weight: '70',
-		temperature: '36.8',
-		source: 'manual',
+		systolic: '',
+		diastolic: '',
+		heart_rate: '',
+		blood_glucose: '',
+		weight: '',
+		temperature: '',
+		source: '',
 		custom_metrics: [
-			{ key: 'Vitamin D', value: '30', unit: 'ng/mL' },
-			{ key: 'Iron', value: '12', unit: 'μmol/L' }
+			{ key: '', value: '', unit: 'ng/mL' },
+			{ key: '', value: '', unit: 'μmol/L' }
 		]
 	});
 
@@ -59,6 +61,109 @@
 		}
 	}
 </script>
+
+<section class="hms-container py-6">
+	<div class="mb-8">
+		<p
+			class=" flex h-[60px] w-[60px] items-center justify-center rounded-full bg-base-300 text-3xl"
+		>
+			📋
+		</p>
+		<h1 class=" mt-[3px] border-b-[3px] border-secondary pb-[8px] text-2xl font-bold">
+			<span>Health Metrics</span>
+			<span class=" text-secondary">|</span>
+			<span class=" text-[#7f7f7f]">New</span>
+		</h1>
+		<p class=" text-lg text-[#7f7f7f]">Create new metrics here.</p>
+	</div>
+
+	<form>
+		<div class="grid max-w-3xl grid-cols-1 gap-4">
+			<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+				<label class="floating-label">
+					<span>Systolic (mmHg)</span>
+					<input
+						name="systolic"
+						type="text"
+						placeholder="Systolic (mmHg)"
+						class="input w-full"
+						required
+						bind:value={formData.systolic}
+					/>
+				</label>
+				<label class="floating-label">
+					<span>Diastolic (mmHg)</span>
+					<input
+						name="diastolic"
+						type="text"
+						placeholder="Diastolic (mmHg)"
+						class="input w-full"
+						required
+						bind:value={formData.diastolic}
+					/>
+				</label>
+				<label class="floating-label">
+					<span>Heart Rate (bpm)</span>
+					<input
+						name="heart_rate"
+						type="text"
+						placeholder="Heart Rate (bpm)"
+						class="input w-full"
+						required
+						bind:value={formData.heart_rate}
+					/>
+				</label>
+				<label class="floating-label">
+					<span>Blood Glucose (mg/dL)</span>
+					<input
+						name="blood_glucose"
+						type="text"
+						placeholder="Blood Glucose (mg/dL)"
+						class="input w-full"
+						required
+						bind:value={formData.blood_glucose}
+					/>
+				</label>
+				<label class="floating-label">
+					<span>Weight (kg)</span>
+					<input
+						name="weight"
+						type="text"
+						placeholder="Weight (kg)"
+						class="input w-full"
+						required
+						bind:value={formData.weight}
+					/>
+				</label>
+
+				<label class="floating-label">
+					<span>Temperature (°C)</span>
+					<input
+						name="temperature"
+						type="text"
+						placeholder="Temperature (°C)"
+						class="input w-full"
+						required
+						bind:value={formData.temperature}
+					/>
+				</label>
+			</div>
+
+			<div class="relative py-4">
+				<div class="absolute inset-0 flex items-center">
+					<span class="w-full border-t border-accent"></span>
+				</div>
+				<div class="relative flex justify-center text-xs uppercase">
+					<span class="bg-base-100 px-2 text-[#737373]">Custom Metrics</span>
+				</div>
+			</div>
+
+			{#each customMetrics.attributes as _, index}
+				<CustomMetricFrom />
+			{/each}
+		</div>
+	</form>
+</section>
 
 <div class="mx-auto mt-10 max-w-2xl rounded-xl bg-base-200 p-6 shadow-lg">
 	<h2 class="mb-6 text-2xl font-semibold">📋 Add Health Metrics</h2>
