@@ -8,6 +8,8 @@
 	let { data } = $props();
 	const metric = data.latestMetric;
 
+	// console.log(metric)
+
 	const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']; // Static for demo
 	const values = [metric?.heart_rate, 74, 71, 70, 69]; // Simulated weekly values
 
@@ -56,53 +58,64 @@
 			</select>
 		</div>
 
-		<div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-			<SummaryCard title="Heart Rate" value="{summary.heart_rate} bpm" icon="💓" />
-			<SummaryCard
-				title="Blood Pressure"
-				value="{summary.blood_pressure.systolic}/{summary.blood_pressure.diastolic} mmHg"
-				icon="🩸"
-			/>
-			<SummaryCard title="Blood Glucose" value="{summary.blood_glucose} mg/dL" icon="🧪" />
-			<SummaryCard title="Temperature" value="{summary.temperature} °C" icon="🌡️" />
-			<SummaryCard title="Weight" value="{summary.weight} kg" icon="⚖️" />
+		{#if metric?.id}
+			<div class="w-full">
+				<div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+					<SummaryCard title="Heart Rate" value="{summary.heart_rate} bpm" icon="💓" />
+					<SummaryCard
+						title="Blood Pressure"
+						value="{summary.blood_pressure.systolic}/{summary.blood_pressure.diastolic} mmHg"
+						icon="🩸"
+					/>
+					<SummaryCard title="Blood Glucose" value="{summary.blood_glucose} mg/dL" icon="🧪" />
+					<SummaryCard title="Temperature" value="{summary.temperature} °C" icon="🌡️" />
+					<SummaryCard title="Weight" value="{summary.weight} kg" icon="⚖️" />
 
-			<HealthScore score={healthScore} />
-		</div>
+					<HealthScore score={healthScore} />
+				</div>
 
-		<!-- Charts -->
-		<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-			<div class="rounded-xl bg-white p-4 shadow-md">
-				<ChartCanvas title="Heart Rate (Line)" type="line" {labels} {values} />
-			</div>
-			<div class="rounded-xl bg-white p-4 shadow-md">
-				<ChartCanvas title="Heart Rate (Area)" type="area" {labels} {values} />
-			</div>
-			<div class="rounded-xl bg-white p-4 shadow-md">
-				<ChartCanvas title="Heart Rate (Bar)" type="bar" {labels} {values} />
-			</div>
-			<div class="rounded-xl bg-white p-4 shadow-md">
-				<ChartCanvas
-					title="Metric Distribution (Pie)"
-					type="pie"
-					labels={['Heart Rate', 'Glucose', 'BP']}
-					values={[
-						summary.heart_rate ?? 0,
-						summary.blood_glucose ?? 0,
-						(summary.blood_pressure.systolic + summary.blood_pressure.diastolic) / 2
-					]}
-				/>
-			</div>
-		</div>
+				<!-- Charts -->
+				<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+					<div class="rounded-xl bg-white p-4 shadow-md">
+						<ChartCanvas title="Heart Rate (Line)" type="line" {labels} {values} />
+					</div>
+					<div class="rounded-xl bg-white p-4 shadow-md">
+						<ChartCanvas title="Heart Rate (Area)" type="area" {labels} {values} />
+					</div>
+					<div class="rounded-xl bg-white p-4 shadow-md">
+						<ChartCanvas title="Heart Rate (Bar)" type="bar" {labels} {values} />
+					</div>
+					<div class="rounded-xl bg-white p-4 shadow-md">
+						<ChartCanvas
+							title="Metric Distribution (Pie)"
+							type="pie"
+							labels={['Heart Rate', 'Glucose', 'BP']}
+							values={[
+								summary.heart_rate ?? 0,
+								summary.blood_glucose ?? 0,
+								(summary.blood_pressure.systolic + summary.blood_pressure.diastolic) / 2
+							]}
+						/>
+					</div>
+				</div>
 
-		<!-- Print Friendly -->
-		<div class="mt-10 text-right">
-			<a
-				href="/dashboard/reports"
-				class="inline-block rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-			>
-				🧾 View/Print Doctor Report
-			</a>
-		</div>
+				<!-- Print Friendly -->
+				<div class="mt-10 text-right">
+					<a
+						href="/dashboard/reports"
+						class="inline-block rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+					>
+						🧾 View/Print Doctor Report
+					</a>
+				</div>
+			</div>
+		{:else}
+			<div class="w-full">
+				<p class="mt-4 text-lg text-gray-500">
+					No metrics found. Start by adding your first record. <span class=" text-secondary">|</span
+					> <a href="/metrics/new" class=" font-semibold text-secondary hover:underline">New</a>
+				</p>
+			</div>
+		{/if}
 	</div>
 </section>
