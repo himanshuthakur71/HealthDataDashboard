@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { marked } from 'marked';
 	import { goto, invalidate } from '$app/navigation';
 	import CustomMetricFrom from '$lib/components/CustomMetricFrom.svelte';
 	import { customMetrics } from '$lib/stores/customMetricStore.svelte';
@@ -138,6 +139,19 @@
 	const sendHealthReport = async () => {
 		sending = true;
 
+		const res = await fetch('c', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				formData,
+				healthScore
+			})
+		});
+		const { generatedText } = await res.json();
+		// console.log(generatedText);
+
 		let healthColor = '#198754'; // green
 		if (healthScore < 40)
 			healthColor = '#dc3545'; // red
@@ -195,7 +209,9 @@
 
     <div style="background-color: #fff3cd; padding: 15px; margin-top: 25px; border-radius: 6px;">
       <strong>AI Doctor's Feedback:</strong>
-      <p style="margin: 10px 0 0;">Vitals look stable. Consider routine checkup in 2 months.</p>
+      <div style="margin: 10px 0 0;">
+				${marked(generatedText)}
+	  </div>
     </div>
 
     <p style="margin-top: 20px;">This summary can be shared with your healthcare provider for review.</p>
