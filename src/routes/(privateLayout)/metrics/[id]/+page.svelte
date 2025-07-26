@@ -5,6 +5,7 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import type { PageProps } from './$types';
+	import { page } from '$app/state';
 
     let { data }: PageProps = $props();
 
@@ -47,7 +48,7 @@
 		
 
 		try {
-			const res = await fetch('/api/metrics/new', {
+			const res = await fetch(`/api/metrics/${page.params.id}`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(formData)

@@ -13,7 +13,7 @@ export const POST = async ({ request, locals: { supabase, user } }) => {
 		}
 
 
-         console.log(user?.id)
+        //  console.log(user?.id)
 
 		const body = await request.json();
 
