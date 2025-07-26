@@ -56,7 +56,7 @@
 			const result = await res.json();
 			if (result.success) {
 				modalSuccess = true;
-				sendHealthReport();
+				sendHealthReport(result?.id);
 			} else {
 				alert(`❌ Error: ${result.error}`);
 			}
@@ -94,7 +94,7 @@
 		)
 	);
 
-	const sendHealthReport = async () => {
+	const sendHealthReport = async (metric_id:any) => {
 		sending = true;
 
 		const res = await fetch('/api/gemini', {
@@ -107,8 +107,24 @@
 				healthScore
 			})
 		});
-		const { generatedText } = await res.json() || '';
+		const { generatedText } = (await res.json()) || '';
 		// console.log(generatedText);
+
+		if (generatedText) {
+			// Store AI Report in Supabase
+			const { error: insertError } = await data?.supabase.from('ai_reports').insert([
+				{
+					user_id: data?.user?.id,
+					metric_id: metric_id,
+					health_score: healthScore,
+					feedback: generatedText
+				}
+			]);
+
+			if (insertError) {
+				console.error('Error saving report to Supabase:', insertError);
+			}
+		}
 
 		let healthColor = '#198754'; // green
 		if (healthScore < 40)

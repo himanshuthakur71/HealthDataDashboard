@@ -42,7 +42,7 @@ export const POST = async ({ request, locals: { supabase, user } }) => {
 			throw error(400, 'At least one metric is required');
 		}
 
-		const { error: insertError } = await supabase
+		const { error: insertError, data: insertData } = await supabase
 			.from('health_metrics')
 			.insert([
 				{
@@ -56,14 +56,14 @@ export const POST = async ({ request, locals: { supabase, user } }) => {
 					source,
 					custom_metrics
 				}
-			]);
+			]).select().single();
 
 		if (insertError) {
 			console.error(insertError);
 			throw error(500, 'Failed to save metric');
 		}
 
-		return json({ success: true });
+		return json({ success: true, id: insertData.id });
 	} catch (err: any) {
 		console.error('API ERROR:', err);
 		return json({ success: false, error: err.message || 'Server Error' }, { status: 500 });
