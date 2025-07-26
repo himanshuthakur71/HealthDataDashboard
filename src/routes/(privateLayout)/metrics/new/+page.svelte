@@ -3,6 +3,8 @@
 	import CustomMetricFrom from '$lib/components/CustomMetricFrom.svelte';
 	import { customMetrics } from '$lib/stores/customMetricStore.svelte';
 
+	const newCustomMetric = { key: '', value: '', unit: 'ng/mL' }
+
 	let formData = $state({
 		systolic: '',
 		diastolic: '',
@@ -12,21 +14,14 @@
 		temperature: '',
 		source: '',
 		custom_metrics: [
-			{ key: '', value: '', unit: 'ng/mL' },
-			{ key: '', value: '', unit: 'μmol/L' }
+			
 		]
 	});
 
 	let message = $state('');
 	let loading = $state(false);
 
-	function addCustomMetric() {
-		formData.custom_metrics.push({ key: '', value: '', unit: '' });
-	}
-
-	function removeCustomMetric(index: number) {
-		formData.custom_metrics.splice(index, 1);
-	}
+	
 
 	async function handleSubmit(e: Event) {
 		e.preventDefault();
@@ -41,7 +36,7 @@
 			blood_glucose: Number(formData.blood_glucose),
 			weight: Number(formData.weight),
 			temperature: Number(formData.temperature),
-			custom_metrics: formData.custom_metrics.filter((m) => m.key && m.value && m.unit)
+			custom_metrics:  customMetrics.attributes.filter((m) => m.key && m.value && m.unit)
 		};
 
 		const res = await fetch('/api/metrics/new', {
@@ -161,85 +156,14 @@
 			{#each customMetrics.attributes as _, index}
 				<CustomMetricFrom />
 			{/each}
+
+			<div class="w-full">
+				<button type="button" class="btn btn-outline" onclick={() => (customMetrics.add(newCustomMetric))}>
+				➕ Add Custom Metric
+			</button>
+			</div>
 		</div>
 	</form>
 </section>
 
-<div class="mx-auto mt-10 max-w-2xl rounded-xl bg-base-200 p-6 shadow-lg">
-	<h2 class="mb-6 text-2xl font-semibold">📋 Add Health Metrics</h2>
 
-	<form class="space-y-4" onsubmit={handleSubmit}>
-		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-			<div class="form-control">
-				<label class="label">Systolic (mmHg)</label>
-				<input type="number" class="input-bordered input" bind:value={formData.systolic} />
-			</div>
-			<div class="form-control">
-				<label class="label">Diastolic (mmHg)</label>
-				<input type="number" class="input-bordered input" bind:value={formData.diastolic} />
-			</div>
-			<div class="form-control">
-				<label class="label">Heart Rate (bpm)</label>
-				<input type="number" class="input-bordered input" bind:value={formData.heart_rate} />
-			</div>
-			<div class="form-control">
-				<label class="label">Blood Glucose (mg/dL)</label>
-				<input type="number" class="input-bordered input" bind:value={formData.blood_glucose} />
-			</div>
-			<div class="form-control">
-				<label class="label">Weight (kg)</label>
-				<input type="number" class="input-bordered input" bind:value={formData.weight} />
-			</div>
-			<div class="form-control">
-				<label class="label">Temperature (°C)</label>
-				<input type="number" class="input-bordered input" bind:value={formData.temperature} />
-			</div>
-		</div>
-
-		<!-- Custom Metrics -->
-		<div class="divider">Custom Metrics</div>
-		{#each formData.custom_metrics as metric, index}
-			<div class="mb-2 grid grid-cols-3 items-end gap-2">
-				<input type="text" class="input-bordered input" placeholder="Key" bind:value={metric.key} />
-				<input
-					type="text"
-					class="input-bordered input"
-					placeholder="Value"
-					bind:value={metric.value}
-				/>
-				<input
-					type="text"
-					class="input-bordered input"
-					placeholder="Unit"
-					bind:value={metric.unit}
-				/>
-			</div>
-		{/each}
-
-		<div class="mb-4 flex gap-2">
-			<button type="button" class="btn btn-outline btn-sm" onclick={addCustomMetric}>
-				➕ Add Custom Metric
-			</button>
-			{#if formData.custom_metrics.length > 1}
-				<button
-					type="button"
-					class="btn btn-sm btn-error"
-					onclick={() => removeCustomMetric(formData.custom_metrics.length - 1)}
-				>
-					🗑 Remove Last
-				</button>
-			{/if}
-		</div>
-
-		<!-- Hidden Source -->
-		<input type="hidden" bind:value={formData.source} />
-
-		<button type="submit" class="btn w-full btn-primary" disabled={loading}>
-			{loading ? 'Submitting...' : 'Submit Metrics'}
-		</button>
-
-		{#if message}
-			<p class="mt-4 text-center text-sm">{message}</p>
-		{/if}
-	</form>
-</div>
