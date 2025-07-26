@@ -15,7 +15,7 @@
 
 <section class="overflow-x-hidden">
 	{#if showForm}
-		<div class="w-full" in:fly={{ x: -325, duration: 500 }}>
+		<div class="w-full max-w-[350px]" in:fly={{ x: -325, duration: 500 }}>
 			<h1 class=" mb-[18px] text-3xl font-bold text-primary">Sign in to your account.</h1>
 			<p class=" text-xl text-primary">
 				Don't have an account? <a
