@@ -3,7 +3,7 @@
 	import 'nprogress/nprogress.css';
 	import '../app.css';
 	import NProgress from 'nprogress';
-	import { navigating } from '$app/state';
+	import { navigating, page } from '$app/state';
 
 	let { children } = $props();
 
@@ -21,9 +21,15 @@
 			NProgress.done();
 		}
 	});
+
+	console.log(page);
 </script>
 
-<Navbar />
+<div>
+	{#if !page?.url?.pathname.startsWith('/auth')}
+		<Navbar />
+	{/if}
+</div>
 
 <main>
 	{@render children()}

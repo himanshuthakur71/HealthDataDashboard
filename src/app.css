@@ -1,4 +1,7 @@
 @import 'tailwindcss';
+
+
+
 @plugin "daisyui";
 
 @plugin "daisyui/theme" {
@@ -36,6 +39,8 @@
     --noise: 0;
 }
 
-.hms-container{
+
+
+.hms-container {
     @apply w-full max-w-[1230px] mx-auto px-[20px];
 }
