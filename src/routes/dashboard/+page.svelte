@@ -1,8 +1,12 @@
 <script lang="ts">
 	import SummaryCard from '$lib/components/SummaryCard.svelte';
 	import HealthScore from '$lib/components/HealthScore.svelte';
-	import MetricChart from '$lib/components/MetricChart.svelte';
-	import { onMount } from 'svelte';
+	import ChartCanvas from '$lib/components/ChartCanvas.svelte';
+
+	let { data } = $props();
+
+	const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+	const values = [120, 130, 125, 140, 135];
 
 	let summary = {
 		heart_rate: 72,
@@ -14,52 +18,71 @@
 
 	let healthScore = 82;
 
-	let selectedRange = '7d';
+	let selectedRange = $state('7d');
 	const ranges = ['7d', '30d', 'custom'];
 </script>
 
-<section class="mx-auto max-w-7xl px-4 py-6">
-	<div class="mb-6 flex items-center justify-between">
-		<h1 class="text-2xl font-semibold text-gray-800">Welcome Back 👋</h1>
+<section class="w-full">
+	<div class="hms-container">
+		<div class="my-6 flex items-center justify-between">
+			<h1 class="text-3xl font-semibold text-gray-800">
+				Welcome Back, <span class=" font-bold text-secondary"
+					>{data?.user?.user_metadata?.last_name}</span
+				> 👋
+			</h1>
 
-		<select bind:value={selectedRange} class="rounded-md border px-3 py-1 text-sm text-gray-700">
-			{#each ranges as r}
-				<option value={r}
-					>{r === '7d' ? 'Last 7 Days' : r === '30d' ? 'Last 30 Days' : 'Custom'}</option
-				>
-			{/each}
-		</select>
-	</div>
+			<select bind:value={selectedRange} class="rounded-md border px-3 py-1 text-sm text-gray-700">
+				{#each ranges as r}
+					<option value={r}
+						>{r === '7d' ? 'Last 7 Days' : r === '30d' ? 'Last 30 Days' : 'Custom'}</option
+					>
+				{/each}
+			</select>
+		</div>
 
-	<!-- Summary Cards -->
-	<div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-		<SummaryCard title="Heart Rate" value="{summary.heart_rate} bpm" icon="💓" />
-		<SummaryCard
-			title="Blood Pressure"
-			value="{summary.blood_pressure.systolic}/{summary.blood_pressure.diastolic} mmHg"
-			icon="🩸"
-		/>
-		<SummaryCard title="Blood Glucose" value="{summary.blood_glucose} mg/dL" icon="🧪" />
-		<SummaryCard title="Temperature" value="{summary.temperature} °C" icon="🌡️" />
-		<SummaryCard title="Weight" value="{summary.weight} kg" icon="⚖️" />
-		<HealthScore score={healthScore} />
-	</div>
+		<div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+			<SummaryCard title="Heart Rate" value="{summary.heart_rate} bpm" icon="💓" />
+			<SummaryCard
+				title="Blood Pressure"
+				value="{summary.blood_pressure.systolic}/{summary.blood_pressure.diastolic} mmHg"
+				icon="🩸"
+			/>
+			<SummaryCard title="Blood Glucose" value="{summary.blood_glucose} mg/dL" icon="🧪" />
+			<SummaryCard title="Temperature" value="{summary.temperature} °C" icon="🌡️" />
+			<SummaryCard title="Weight" value="{summary.weight} kg" icon="⚖️" />
 
-	<!-- Charts -->
-	<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-		<MetricChart type="line" metric="heart_rate" range={selectedRange} />
-		<MetricChart type="bar" metric="blood_glucose" range={selectedRange} />
-		<MetricChart type="area" metric="weight" range={selectedRange} />
-		<MetricChart type="pie" metric="custom_distribution" range={selectedRange} />
-	</div>
+			<HealthScore score={healthScore} />
+		</div>
 
-	<!-- Print Friendly -->
-	<div class="mt-10 text-right">
-		<a
-			href="/dashboard/reports"
-			class="inline-block rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-		>
-			🧾 View/Print Doctor Report
-		</a>
+		<!-- Charts -->
+		<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div class="p-4 rounded-xl bg-white shadow-md">
+			<ChartCanvas title="Heart Rate (Line)" type="line" {labels} {values} />
+            </div>
+            <div class="p-4 rounded-xl bg-white shadow-md">
+			<ChartCanvas title="Heart Rate (Area)" type="area" {labels} {values} />
+            </div>
+            <div class="p-4 rounded-xl bg-white shadow-md">
+			<ChartCanvas title="Heart Rate (Bar)" type="bar" {labels} {values} />
+            </div>
+            <div class="p-4 rounded-xl bg-white shadow-md">
+			<ChartCanvas
+				title="Metric Distribution (Pie)"
+				type="pie"
+				labels={['HR', 'BP', 'Glucose']}
+				values={[30, 40, 30]}
+			/>
+            </div>
+		</div>
+
+		<!-- Print Friendly -->
+		<div class="mt-10 text-right">
+			<a
+				href="/dashboard/reports"
+				class="inline-block rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+			>
+				🧾 View/Print Doctor Report
+			</a>
+		</div>
 	</div>
 </section>
