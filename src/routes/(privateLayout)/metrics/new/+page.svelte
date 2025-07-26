@@ -15,47 +15,48 @@
 		weight: '',
 		temperature: '',
 		source: 'manual',
-		custom_metrics: []
+		custom_metrics: [] as any
 	});
 
-	let modalSucess = $state(false);
+	let modalSuccess = $state(false);
 	let loading = $state(false);
 
 	onMount(() => {
 		if (!customMetrics.attributes?.length) {
-			customMetrics.add(newCustomMetric);
+			customMetrics.add({ ...newCustomMetric });
 		}
 	});
+
+	$effect(() => {
+		$inspect(formData)
+	})
 
 	async function handleSubmit(e: Event) {
 		e.preventDefault();
 
 		loading = true;
 
-		const payload = {
-			...formData,
-			systolic: Number(formData.systolic),
-			diastolic: Number(formData.diastolic),
-			heart_rate: Number(formData.heart_rate),
-			blood_glucose: Number(formData.blood_glucose),
-			weight: Number(formData.weight),
-			temperature: Number(formData.temperature),
-			custom_metrics: customMetrics.attributes.filter((m) => m.key && m.value && m.unit)
-		};
+		formData.custom_metrics = customMetrics.attributes;
+		
 
-		const res = await fetch('/api/metrics/new', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(payload)
-		});
+		try {
+			const res = await fetch('/api/metrics/new', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(formData)
+			});
 
-		const result = await res.json();
-		loading = false;
-
-		if (result.success) {
-			modalSucess = true;
-		} else {
-			alert(`❌ Error: ${result.error}`);
+			const result = await res.json();
+			if (result.success) {
+				modalSuccess = true;
+			} else {
+				alert(`❌ Error: ${result.error}`);
+			}
+		} catch (err) {
+			console.error(err);
+			alert('Something went wrong while submitting!');
+		} finally {
+			loading = false;
 		}
 	}
 </script>
@@ -180,7 +181,7 @@
 	</form>
 </section>
 
-{#if modalSucess}
+{#if modalSuccess}
 	<dialog id="my_modal_1" class="modal-open modal">
 		<div class="modal-box" transition:fade>
 			<figure class="mx-auto mb-[7px] flex h-[50px] w-[45px] items-center justify-center">
