@@ -35,3 +35,7 @@
     --depth: 1;
     --noise: 0;
 }
+
+.hms-container{
+    @apply w-full max-w-[1230px] mx-auto px-[20px];
+}
