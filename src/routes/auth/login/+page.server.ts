@@ -8,12 +8,17 @@ export const actions: Actions = {
     const email = formData.get('email') as string
     const password = formData.get('password') as string
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { error, data: user_data } = await supabase.auth.signInWithPassword({ email, password })
     if (error) {
       console.error(error)
-      return fail(400, { email, password,  error: error.message });
+      return fail(400, { email, password, error: error.message });
     } else {
-      redirect(303, '/dashboard')
+      if (user_data?.user.user_metadata.role == 'patient') {
+        throw redirect(302, '/dashboard');
+      }
+      if (user_data?.user.user_metadata.role == 'provider') {
+        throw redirect(302, '/admin');
+      }
     }
   },
 }
