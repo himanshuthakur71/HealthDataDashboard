@@ -18,9 +18,10 @@
 					<div class="dropdown dropdown-end">
 						<div tabindex="0" role="button" class="btn avatar btn-circle btn-ghost">
 							<div class="w-10 rounded-full">
+								
 								<img
-									alt="Tailwind CSS Navbar component"
-									src="https://ui-avatars.com/api/?name={page?.data?.session?.user?.user_metadata?.first_name}+{page?.data?.session?.user?.user_metadata?.last_name}&background=random"
+									alt="xxUserName"
+									src="{page?.data?.session?.user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${page?.data?.session?.user?.user_metadata?.first_name}+${page?.data?.session?.user?.user_metadata?.last_name}&background=random`}"
 								/>
 							</div>
 						</div>
