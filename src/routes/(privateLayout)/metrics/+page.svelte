@@ -33,8 +33,8 @@
 
 	<div class="w-full">
 		<form method="GET">
-			<div class="flex w-full gap-[20px]">
-				<label class="w-full max-w-[132px]">
+			<div class="flex w-full gap-[20px] overflow-x-auto">
+				<label class="w-[132px] shrink-0">
 					<span class=" label-text">Date</span>
 					<select class="select w-full" name="range">
 						<option value="">Select</option>
@@ -45,7 +45,7 @@
 				</label>
 
 				{#each ['bp', 'hr', 'glucose', 'weight', 'temp', 'source'] as filter}
-					<label class="w-full max-w-[132px]">
+					<label class="w-[132px] shrink-0">
 						<span class="label-text">{filter.toUpperCase()}</span>
 						<input
 							type="text"
@@ -57,7 +57,7 @@
 					</label>
 				{/each}
 
-				<div class="flex w-full max-w-[132px] items-end justify-end">
+				<div class="flex  items-end justify-end">
 					<button type="submit" class=" btn btn-primary">Search</button>
 				</div>
 			</div>
@@ -99,4 +99,8 @@
 	{:else}
 		<p class="mt-4 text-sm text-gray-500">No metrics found. Start by adding your first record.</p>
 	{/if}
+
+	<div class="w-full mt-16">
+		<a href="/dashboard" class=" btn btn-primary btn-outline btn-lg">Back</a>
+	</div>
 </section>
