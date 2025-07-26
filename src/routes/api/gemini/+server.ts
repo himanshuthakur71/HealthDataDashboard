@@ -22,9 +22,9 @@ const generationConfig = {
     responseMimeType: 'text/plain',
 };
 
-export async function POST(event) {
+export async function POST({ request }) {
     try {
-        const body = await event.request.json();
+        const body = await request.json();
         const { formData, healthScore } = body;
 
         if (!formData) {
@@ -44,6 +44,7 @@ export async function POST(event) {
         }
 
         const generatedText = await run();
+
 
         return json({ generatedText }, { status: 200 });
 
