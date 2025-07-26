@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import type { PageProps } from './$types';
 
@@ -69,8 +70,8 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each data?.metrics as m}
-						<tr class="hover:bg-base-300">
+					{#each data?.metrics as m (m.id)}
+						<tr class="hover:bg-base-300 cursor-pointer" onclick="{() => goto(`/metrics/${m.id}`)}">
 							<td class="border-r border-[#f1eeef]">{formatDate(m.created_at)}</td>
 							<td class="border-r border-[#f1eeef]">{m.systolic}/{m.diastolic}</td>
 							<td class="border-r border-[#f1eeef]">{m.heart_rate} bpm</td>
