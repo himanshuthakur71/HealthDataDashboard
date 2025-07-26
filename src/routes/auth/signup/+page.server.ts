@@ -21,7 +21,10 @@ export const actions: Actions = {
           first_name,
           last_name,
           email,
-          role: 'patient'
+          role: 'patient',
+          dob: '',
+          gender: '',
+          avatar_url: ''
         }
       }
     })
