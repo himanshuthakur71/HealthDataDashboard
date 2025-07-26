@@ -27,9 +27,9 @@
 		}
 	});
 
-	$effect(() => {
-		$inspect(formData)
-	})
+	// $effect(() => {
+	// 	$inspect(formData)
+	// })
 
 	async function handleSubmit(e: Event) {
 		e.preventDefault();

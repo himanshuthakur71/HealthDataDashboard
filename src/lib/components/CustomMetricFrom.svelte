@@ -4,13 +4,17 @@
 
 	let { index }: { index: any } = $props();
 
-	let fromFields = $state({ key: customMetrics?.attributes?.[index]?.key ||  '', value: customMetrics?.attributes?.[index]?.value ||  '', unit: customMetrics?.attributes?.[index]?.unit ||  '' });
+	let fromFields = $state({
+		key: customMetrics?.attributes?.[index]?.key || '',
+		value: customMetrics?.attributes?.[index]?.value || '',
+		unit: customMetrics?.attributes?.[index]?.unit || ''
+	});
 </script>
-
+<!-- <pre>{JSON.stringify(customMetrics?.attributes?.[index], null, 2)}</pre> -->
 <div class="relative grid grid-cols-1 gap-4 pr-[50px] md:grid-cols-2 lg:grid-cols-3">
-	<label class="floating-label" oninput={() => customMetrics.updateIndex(index, fromFields)}>
+	<label class="floating-label" >
 		<span>Key</span>
-		<input name="key" type="text" placeholder="Key" class="input w-full" required />
+		<input name="key" type="text" placeholder="Key" class="input w-full" required  bind:value={fromFields.key} oninput={() => customMetrics.updateIndex(index, fromFields)}/>
 	</label>
 
 	<label class="floating-label">
@@ -20,6 +24,7 @@
 			class="select w-full"
 			name="unit"
 			required
+			bind:value={fromFields.unit}
 			onchange={() => customMetrics.updateIndex(index, fromFields)}
 		>
 			<option value="">Select</option>
@@ -29,9 +34,9 @@
 		</select>
 	</label>
 
-	<label class="floating-label" oninput={() => customMetrics.updateIndex(index, fromFields)}>
+	<label class="floating-label" >
 		<span>Value</span>
-		<input name="value" type="text" placeholder="Value" class="input w-full" required />
+		<input name="value" type="text" placeholder="Value" class="input w-full" required bind:value={fromFields.value} oninput={() => customMetrics.updateIndex(index, fromFields)} />
 	</label>
 
 	{#if index != 0}

@@ -3,8 +3,9 @@
 	import { deleteAvatar } from '$lib/helpers/deleteAvatar.js';
 	import { uploadAvatarWithProgress } from '$lib/helpers/uploadAvatar.js';
 	import { fade } from 'svelte/transition';
+	import type { PageProps } from './$types';
 
-	let { data } = $props();
+	let { data }: PageProps = $props();
 	let { supabase } = $derived(data);
 
 	let modalSucess = $state(false);
