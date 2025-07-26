@@ -1,11 +1,10 @@
 import { error } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types'
 
-export const load: LayoutServerLoad = async ({ locals: { safeGetSession }, cookies }) => {
-    const { session } = await safeGetSession()
-
+export const load: LayoutServerLoad = async ({ locals: {user} }) => {
+   
     
-    if (!session?.user?.id) {
+    if (!user?.id) {
         throw error(422, 'Access denied');
     }
 }

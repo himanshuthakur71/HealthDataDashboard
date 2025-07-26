@@ -2,13 +2,13 @@ import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 
-export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
-    const { session } = await safeGetSession()
+export const load: PageServerLoad = async ({ locals: { user } }) => {
 
-    if (session?.user.user_metadata.role == 'patient') {
+
+    if (user?.id && user.user_metadata.role == 'patient') {
         throw redirect(302, '/dashboard');
     }
-    if (session?.user.user_metadata.role == 'provider') {
+    if (user?.id && user.user_metadata.role == 'provider') {
         throw redirect(302, '/admin');
     }
 
