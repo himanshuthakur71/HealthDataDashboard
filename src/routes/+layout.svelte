@@ -1,11 +1,14 @@
 <script lang="ts">
+	import { invalidate } from '$app/navigation';
+	import { onMount } from 'svelte';
 	import Navbar from '$lib/components/Navbar.svelte';
 	import 'nprogress/nprogress.css';
 	import '../app.css';
 	import NProgress from 'nprogress';
 	import { navigating, page } from '$app/state';
 
-	let { children } = $props();
+	let { data, children } = $props();
+	let { session, supabase } = $derived(data);
 
 	// Initialize NProgress configuration
 	NProgress.configure({
@@ -22,7 +25,14 @@
 		}
 	});
 
-	console.log(page);
+	onMount(() => {
+		const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
+			if (newSession?.expires_at !== session?.expires_at) {
+				invalidate('supabase:auth');
+			}
+		});
+		return () => data.subscription.unsubscribe();
+	});
 </script>
 
 <div>

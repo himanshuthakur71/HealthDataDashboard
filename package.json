@@ -38,6 +38,8 @@
 		"vite-plugin-devtools-json": "^0.2.0"
 	},
 	"dependencies": {
+		"@supabase/ssr": "^0.6.1",
+		"@supabase/supabase-js": "^2.52.1",
 		"nprogress": "^0.2.0"
 	}
 }
