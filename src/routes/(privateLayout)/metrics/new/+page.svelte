@@ -4,6 +4,9 @@
 	import { customMetrics } from '$lib/stores/customMetricStore.svelte';
 	import { onDestroy, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
+	import type { PageProps } from './$types';
+
+	let { data }: PageProps = $props();
 
 	const newCustomMetric = { key: '', value: '', unit: '' };
 
@@ -29,7 +32,7 @@
 
 	onDestroy(() => {
 		customMetrics.update([]);
-	})
+	});
 
 	// $effect(() => {
 	// 	$inspect(formData)
@@ -41,7 +44,6 @@
 		loading = true;
 
 		formData.custom_metrics = customMetrics.attributes;
-		
 
 		try {
 			const res = await fetch('/api/metrics/new', {
@@ -53,6 +55,7 @@
 			const result = await res.json();
 			if (result.success) {
 				modalSuccess = true;
+				sendMail()
 			} else {
 				alert(`❌ Error: ${result.error}`);
 			}
@@ -63,6 +66,27 @@
 			loading = false;
 		}
 	}
+
+	const sendMail = async () => {
+		try {
+			const res = await fetch(`/api/send-email`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					to: data?.user?.email,
+					subject: 'Bug Report Received - aiWritely',
+					text: `<div> Email will Send</div>`
+				})
+			});
+
+			// const mailRes = await res.json();
+			// console.log('Email response:', mailRes);
+		} catch (error) {
+			console.error('Failed to send email:', error);
+		}
+	};
 </script>
 
 <section class="hms-container py-6">
@@ -189,10 +213,10 @@
 	<dialog id="my_modal_1" class="modal-open modal">
 		<div class="modal-box" transition:fade>
 			<p
-			class=" flex h-[70px] w-[70px] items-center justify-center rounded-full bg-base-300 text-5xl mb-[7px] mx-auto"
-		>
-			📋
-		</p>
+				class=" mx-auto mb-[7px] flex h-[70px] w-[70px] items-center justify-center rounded-full bg-base-300 text-5xl"
+			>
+				📋
+			</p>
 			<h4 class=" text-center text-3xl font-bold text-primary">Health Metrics</h4>
 			<p class=" text-center text-2xl text-[#7f7f7f]">successfully saved.</p>
 			<div class="modal-action justify-center">
