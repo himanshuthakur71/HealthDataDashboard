@@ -11,11 +11,11 @@
 	let modalSucess = $state(false);
 
 	let formFields = $state({
-		first_name: data?.session?.user?.user_metadata?.first_name || '',
-		last_name: data?.session?.user?.user_metadata?.last_name || '',
-		email: data?.session?.user?.user_metadata?.email || '',
-		gender: data?.session?.user?.user_metadata?.gender || '',
-		dob: data?.session?.user?.user_metadata?.dob || ''
+		first_name: data?.user?.user_metadata?.first_name || '',
+		last_name: data?.user?.user_metadata?.last_name || '',
+		email: data?.user?.user_metadata?.email || '',
+		gender: data?.user?.user_metadata?.gender || '',
+		dob: data?.user?.user_metadata?.dob || ''
 	});
 
 	const updateUser = async () => {
@@ -165,7 +165,7 @@
 				<h1 class=" mt-[3px] border-b-[3px] border-secondary pb-[8px] text-2xl font-bold">
 					<span>Profile</span>
 					<span class=" text-secondary">|</span>
-					<span class=" text-[#7f7f7f]">xxNamexx</span>
+					<span class=" text-[#7f7f7f]">{data?.user?.user_metadata?.first_name} {data?.user?.user_metadata?.last_name}</span>
 				</h1>
 				<p class=" text-lg text-[#7f7f7f]">Manage your profile details here.</p>
 			</div>
