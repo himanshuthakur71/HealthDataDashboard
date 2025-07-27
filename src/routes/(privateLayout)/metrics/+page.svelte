@@ -25,7 +25,7 @@
 				<summary class="btn m-1 btn-soft btn-primary">➕ Add Metric</summary>
 				<ul class="dropdown-content menu z-1 w-52 rounded-box bg-base-100 p-2 shadow-sm">
 					<li><a href="/metrics/new">Add Manual</a></li>
-					<li><a href="/metrics/new">Upload PDF</a></li>
+					<li><a href="/metrics/new?upload=true">Upload PDF</a></li>
 				</ul>
 			</details>
 		</div>

@@ -6,8 +6,13 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import type { PageProps } from './$types';
+	import { uploadPdfWithProgress } from '$lib/helpers/uploadPdfWithProgress';
+	import { page } from '$app/state';
 
 	let { data }: PageProps = $props();
+	let { user, supabase } = $derived(data);
+
+	let uploadPDF = $state(JSON.parse(page.url.searchParams.get('upload') || 'false'));
 
 	const newCustomMetric = { key: '', value: '', unit: '' };
 
@@ -94,7 +99,7 @@
 		)
 	);
 
-	const sendHealthReport = async (metric_id:any) => {
+	const sendHealthReport = async (metric_id: any) => {
 		sending = true;
 
 		const res = await fetch('/api/gemini', {
@@ -204,6 +209,67 @@
 			sending = false;
 		}
 	};
+
+	// Upload PDF
+
+	let selectedFile: File | null = $state(null);
+	let progress = $state(0);
+	let uploading = $state(false);
+
+	async function handleUpload() {
+		if (!selectedFile) return;
+		uploading = true;
+		try {
+			const url = await uploadPdfWithProgress({
+				supabase,
+				file: selectedFile,
+				userId: user?.id,
+				onProgress: (p) => (progress = p)
+			});
+			if (url) {
+				convertPDFtoText(url);
+			}
+		} catch (err: any) {
+			console.error(err);
+		} finally {
+			uploading = false;
+		}
+	}
+
+	const convertPDFtoText = async (pdfUrl: string) => {
+		// Example POST request to /api/pdf-to-text
+		const res = await fetch('/api/pdf-to-text', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				pdfUrl: pdfUrl
+			})
+		});
+
+		const { text } = await res.json();
+		if (text) {
+			parseTextToAI(text);
+		}
+	};
+
+	const parseTextToAI = async (text: string) => {
+		const res = await fetch('/api/parse-health-text', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ text })
+		});
+
+		const result = await res.json();
+
+		console.log(result);
+
+		if (result?.data) {
+			formData = result.data;
+			customMetrics.update(result.data.custom_metrics);
+		}
+	};
 </script>
 
 <section class="hms-container py-6">
@@ -220,6 +286,27 @@
 		</h1>
 		<p class=" text-lg text-[#7f7f7f]">Create new metrics here.</p>
 	</div>
+
+	{#if uploadPDF}
+	<div class="mb-6 w-full">
+		<p class=" mb-1 text-sm">Upload Your Health Metrics PDF</p>
+		<div class="join">
+			<input
+				type="file"
+				accept="application/pdf"
+				onchange={(e) => (selectedFile = e.target.files?.[0] ?? null)}
+				class="file-input-bordered file-input join-item"
+			/>
+			<button
+				onclick={handleUpload}
+				type="button"
+				class="btn join-item rounded-r-full"
+				disabled={!selectedFile || uploading}>Upload</button
+			>
+		</div>
+	</div>
+
+	{/if}
 
 	<form onsubmit={handleSubmit}>
 		<p class=" mb-2 text-xs text-[#7f7f7f]">(All fields required.)</p>
