@@ -41,7 +41,7 @@
 
 <section class="w-full">
 	<div class="hms-container">
-		<div class="my-6 flex md:items-center md:justify-between  flex-col md:flex-row gap-y-4">
+		<div class="my-6 flex flex-col gap-y-4 md:flex-row md:items-center md:justify-between">
 			<h1 class="text-3xl font-semibold text-gray-800">
 				Welcome Back,
 				<span class="font-bold text-secondary">{data?.user?.user_metadata?.last_name}</span> 👋
@@ -99,14 +99,31 @@
 					</div>
 				</div>
 
-				<!-- Print Friendly -->
-				<div class="mt-10 text-right">
-					<a
-						href="/dashboard/reports"
-						class="inline-block rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-					>
-						🧾 View/Print Doctor Report
-					</a>
+				<div class="my-16 w-full border-[#d7d7d7]">
+					<h2 class=" text-xl font-semibold text-primary">Quick Links</h2>
+					<div class="lg: flex w-full flex-wrap gap-6 py-4">
+						<a
+							href="/metrics"
+							class=" flex max-w-[260px] items-center gap-4 p-4 shadow-md hover:bg-base-300"
+						>
+							<div class=" text-5xl">📊</div>
+							<div class=" flex flex-col items-start gap-1 text-lg">
+								<span class=" font-bold text-secondary">{data?.totalMetrics}</span>
+								<span>Total Metrics</span>
+							</div>
+						</a>
+
+						<a
+							href="/reports"
+							class=" flex max-w-[260px] items-center gap-4 p-4 shadow-md hover:bg-base-300"
+						>
+							<div class=" text-5xl">📋</div>
+							<div class=" flex flex-col items-start gap-1 text-lg">
+								<span class=" font-bold text-secondary">{data?.totalReports}</span>
+								<span>Total Reports</span>
+							</div>
+						</a>
+					</div>
 				</div>
 			</div>
 		{:else}
