@@ -129,7 +129,7 @@
 					</div>
 				</form>
 
-				<div class="relative py-4">
+				<!-- <div class="relative py-4">
 					<div class="absolute inset-0 flex items-center">
 						<span class="w-full border-t border-accent"></span>
 					</div>
@@ -146,7 +146,7 @@
 					<a href="/" class=" text-xl font-bold text-secondary hover:underline"
 						>Forgot your password?</a
 					>
-				</p>
+				</p> -->
 			</div>
 		</div>
 	{/if}
