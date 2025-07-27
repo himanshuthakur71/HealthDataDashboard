@@ -140,13 +140,13 @@
 
 				<form action="">
 					<button type="button" class=" btn w-full">Google</button>
-				</form>
+				</form> -->
 
 				<p class="mt-[32px]">
-					<a href="/" class=" text-xl font-bold text-secondary hover:underline"
+					<a href="/auth/password/new" class=" text-xl font-bold text-secondary hover:underline"
 						>Forgot your password?</a
 					>
-				</p> -->
+				</p>
 			</div>
 		</div>
 	{/if}
