@@ -1,8 +1,14 @@
 // File: src/routes/dashboard/+page.server.ts
 import { subDays } from 'date-fns';
 import type { PageServerLoad } from './$types';
+import { redirect } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ url, locals: { supabase, user } }) => {
+
+	if (user?.id && user.user_metadata.role == 'provider') {
+			throw redirect(302, '/admin');
+	}
+
 	if (!user) return { metrics: [], totalMetrics: 0, totalReports: 0 };
 
 	const range = parseInt(url.searchParams.get('range') || '7', 10);

@@ -15,7 +15,8 @@
 		last_name: data?.user?.user_metadata?.last_name || '',
 		email: data?.user?.user_metadata?.email || '',
 		gender: data?.user?.user_metadata?.gender || '',
-		dob: data?.user?.user_metadata?.dob || ''
+		dob: data?.user?.user_metadata?.dob || '',
+		
 	});
 
 	const updateUser = async () => {
