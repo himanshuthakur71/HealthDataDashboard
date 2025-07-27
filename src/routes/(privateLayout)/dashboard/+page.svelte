@@ -4,8 +4,9 @@
 	import ChartCanvas from '$lib/components/ChartCanvas.svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import type { PageProps } from './$types';
 
-	let { data } = $props();
+	let { data }: PageProps = $props();
 	const metric = data.latestMetric;
 
 	// console.log(metric)
