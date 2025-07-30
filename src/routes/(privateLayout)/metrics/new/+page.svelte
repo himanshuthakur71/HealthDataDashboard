@@ -9,6 +9,8 @@
 	import { createEmailHTML } from '$lib/helpers/createEmailHtml';
 	import { toastStore } from '$lib/stores/toastStore.svelte';
 	import { page } from '$app/state';
+	import { generateGeminiHealthMatic } from '$lib/helpers/generateGeminiHealthMatic';
+	import { parseHealthTextToJSON } from '$lib/helpers/parseHealthTextToJSON';
 
 	let { data, form }: { data: any; form: ActionData } = $props();
 
@@ -116,46 +118,84 @@
 	let pdfName = $state('');
 	let pdfUrl = $state('');
 	let uploading = $state(false);
+	let noRecordModal = $state(false);
 
-	async function handlePdfUpload() {
+	async function handlePdfUpload(e: Event) {
+		e.preventDefault();
+
 		if (!pdf || !user?.id) {
 			alert('Missing PDF file or user ID');
 			return;
 		}
 
 		uploading = true;
-		const filePath = `pdfs/${user?.id}-${Date.now()}.pdf`;
+		try {
+			// Upload PDF
+			const filePath = `pdfs/${user?.id}-${Date.now()}.pdf`;
+			const { error: uploadError } = await supabase.storage
+				.from('health-pdfs')
+				.upload(filePath, pdf, {
+					upsert: true,
+					contentType: 'application/pdf'
+				});
+			if (uploadError) {
+				alert('❌ PDF Upload Failed');
+				console.error(uploadError.message);
+				uploading = false;
+				return;
+			}
 
-		const { error: uploadError } = await supabase.storage
-			.from('health-pdfs')
-			.upload(filePath, pdf, {
-				upsert: true,
-				contentType: 'application/pdf'
-			});
+			// Get Uploaded PDF
+			const { data } = supabase.storage.from('health-pdfs').getPublicUrl(filePath);
+			pdfUrl = data?.publicUrl || '';
+			pdfName = pdf.name;
 
-		if (uploadError) {
-			alert('❌ PDF Upload Failed');
-			console.error(uploadError.message);
+			// convert PDF to text
+			const pdfText = await parsePDF(pdfUrl);
+
+			// console.log(pdfText)
+
+			//  Send Text to AI for JSON
+			const aiMetric = await generateGeminiHealthMatic({ text: pdfText });
+
+			//  AI REsponse to vaild JSON
+			const aiMetricJson = parseHealthTextToJSON(aiMetric);
+
+			console.log(aiMetricJson);
+
+			// Update form vales
+			if (aiMetricJson?.extracted) {
+				systolic = aiMetricJson?.metric?.systolic || '';
+				diastolic = aiMetricJson?.metric?.diastolic || '';
+				heart_rate = aiMetricJson?.metric?.heart_rate || '';
+				blood_glucose = aiMetricJson?.metric?.blood_glucose || '';
+				weight = aiMetricJson?.metric?.weight || '';
+				temperature = aiMetricJson?.metric?.temperature || '';
+
+				// customMetrics = aiMetric?.metric?.custom_metrics;
+			} else {
+				uploading = false;
+
+				setTimeout(() => {
+					noRecordModal = true;
+				}, 500);
+			}
+		} catch (error) {
+			console.log(error);
+		} finally {
 			uploading = false;
-			return;
 		}
-
-		const { data } = supabase.storage.from('health-pdfs').getPublicUrl(filePath);
-		pdfUrl = data?.publicUrl || '';
-		pdfName = pdf.name;
-		source = 'uploaded';
-		parsePDF(pdfUrl)
-		uploading = false;
 	}
 
 	const parsePDF = async (url: String) => {
 		const res = await fetch(`https://express-health-ai.vercel.app/api/pdf-to-text?url=${url}`, {
 			method: 'GET',
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': 'application/json' }
 		});
 
-		const data = await res.json();
-		console.log(data.text);
+		const Resdata = await res.json();
+
+		return Resdata?.text || '';
 	};
 </script>
 
@@ -183,17 +223,17 @@
 				onchange={(e: any) => (pdf = e.target.files?.[0] ?? null)}
 				class="file-input"
 			/>
-			<button type="submit" class="btn join-item rounded-r-full" disabled={uploading}>
+			<button type="submit" class="btn join-item rounded-r-full" disabled={!pdf || uploading}>
 				{uploading ? 'Uploading...' : 'Upload PDF'}
 			</button>
 		</div>
 
-		{#if pdfUrl}
+		<!-- {#if pdfUrl}
 			<div class="mt-4">
 				<p class="text-green-600">✅ Uploaded: {pdfName}</p>
 				<a href={pdfUrl} target="_blank" class="text-blue-500 underline">View PDF</a>
 			</div>
-		{/if}
+		{/if} -->
 	</form>
 
 	<form
@@ -381,6 +421,62 @@
 					type="button"
 					onclick={() => goto('/metrics/list')}
 					class="btn btn-wide max-w-[150px] btn-lg btn-primary">Continue</button
+				>
+			</div>
+		</div>
+	</dialog>
+{/if}
+
+{#if uploading}
+	<dialog id="my_modal_1" class="modal-open modal">
+		<div class="modal-box" transition:fade>
+			<p
+				class=" mx-auto mb-[7px] flex h-[70px] w-[70px] items-center justify-center rounded-full bg-base-300 text-5xl"
+			>
+				📋
+			</p>
+			<h4 class=" text-center text-3xl font-bold text-primary">Health Metrics Report Uploading</h4>
+			<p class=" text-center text-2xl text-[#7f7f7f]">Please wait...</p>
+
+			<figure class=" mx-auto flex h-[120px] w-[120px] items-center justify-center text-secondary">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+					><path
+						fill="none"
+						stroke="currentColor"
+						stroke-linecap="round"
+						stroke-width="2"
+						d="M12 6.99998C9.1747 6.99987 6.99997 9.24998 7 12C7.00003 14.55 9.02119 17 12 17C14.7712 17 17 14.75 17 12"
+						><animateTransform
+							attributeName="transform"
+							attributeType="XML"
+							dur="560ms"
+							from="0,12,12"
+							repeatCount="indefinite"
+							to="360,12,12"
+							type="rotate"
+						/></path
+					></svg
+				>
+			</figure>
+		</div>
+	</dialog>
+{/if}
+
+{#if noRecordModal}
+	<dialog id="my_modal_1" class="modal-open modal">
+		<div class="modal-box" transition:fade>
+			<p
+				class=" mx-auto mb-[7px] flex h-[70px] w-[70px] items-center justify-center rounded-full bg-red-100 text-5xl"
+			>
+				📋
+			</p>
+			<h4 class=" text-center text-3xl font-bold text-error">PDF not have vaild Record</h4>
+			<p class=" text-center text-2xl text-[#7f7f7f]">Please try another pdf.</p>
+			<div class="modal-action justify-center">
+				<button
+					type="button"
+					onclick={() => (noRecordModal = false)}
+					class="btn btn-wide max-w-[150px] btn-lg btn-error">Continue</button
 				>
 			</div>
 		</div>
