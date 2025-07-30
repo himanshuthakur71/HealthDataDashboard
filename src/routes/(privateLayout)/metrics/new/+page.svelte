@@ -213,29 +213,31 @@
 		</h1>
 		<p class=" text-lg text-[#7f7f7f]">Create new metrics here.</p>
 	</div>
-	<!-- PDF Upload UI -->
-	<form onsubmit={handlePdfUpload} class="mb-4">
-		<p class=" mb-[3px] text-sm text-[#7f7f7f]">Upload Health Matric PDF</p>
-		<div class="join w-full max-w-xl">
-			<input
-				type="file"
-				accept="application/pdf"
-				onchange={(e: any) => (pdf = e.target.files?.[0] ?? null)}
-				class="file-input"
-			/>
-			<button type="submit" class="btn join-item rounded-r-full" disabled={!pdf || uploading}>
-				{uploading ? 'Uploading...' : 'Upload PDF'}
-			</button>
-		</div>
 
-		<!-- {#if pdfUrl}
+	{#if uploaded}
+		<!-- PDF Upload UI -->
+		<form onsubmit={handlePdfUpload} class="mb-4">
+			<p class=" mb-[3px] text-sm text-[#7f7f7f]">Upload Health Matric PDF</p>
+			<div class="join w-full max-w-xl">
+				<input
+					type="file"
+					accept="application/pdf"
+					onchange={(e: any) => (pdf = e.target.files?.[0] ?? null)}
+					class="file-input"
+				/>
+				<button type="submit" class="btn join-item rounded-r-full" disabled={!pdf || uploading}>
+					{uploading ? 'Uploading...' : 'Upload PDF'}
+				</button>
+			</div>
+
+			<!-- {#if pdfUrl}
 			<div class="mt-4">
 				<p class="text-green-600">✅ Uploaded: {pdfName}</p>
 				<a href={pdfUrl} target="_blank" class="text-blue-500 underline">View PDF</a>
 			</div>
 		{/if} -->
-	</form>
-
+		</form>
+	{/if}
 	<form
 		method="post"
 		enctype="multipart/form-data"
