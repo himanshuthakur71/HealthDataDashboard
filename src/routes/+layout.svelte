@@ -37,6 +37,12 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Health AI</title>
+	<meta name="robots" content="noindex nofollow" />
+</svelte:head>
+
+
 <div>
 	{#if !page.url.pathname.startsWith('/auth') && page.url.pathname !== '/signout'}
 		<Navbar />

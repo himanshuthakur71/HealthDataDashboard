@@ -6,7 +6,7 @@
 	<div class="hms-container">
 		<div class="navbar px-0">
 			<div class="navbar-start">
-				<a href="/" class="btn text-xl btn-ghost">HealthDash</a>
+				<a href="/" class="btn text-xl btn-ghost">Health AI</a>
 			</div>
 
 			<div class="navbar-end flex items-center gap-4">
