@@ -13,7 +13,6 @@ export const load: PageServerLoad = async ({ params, locals: { supabase, user } 
         .from('ai_reports')
         .select('*')
         .eq('id', id)
-        .eq('user_id', user.id)
         .single();
 
     if (err) {
