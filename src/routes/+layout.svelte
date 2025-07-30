@@ -39,6 +39,7 @@
 
 <svelte:head>
 	<title>Health AI</title>
+	<meta name="description" content="Track, analyze, and share your medical reports with ease. AI-powered insights and personalized dashboards just a click away.">
 	<meta name="robots" content="noindex nofollow" />
 </svelte:head>
 
