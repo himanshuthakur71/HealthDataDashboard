@@ -8,6 +8,7 @@
 	import { generateHealthScore } from '$lib/helpers/generateHealthScore';
 	import { createEmailHTML } from '$lib/helpers/createEmailHtml';
 	import { toastStore } from '$lib/stores/toastStore.svelte';
+	import { page } from '$app/state';
 
 	let { data, form }: { data: any; form: ActionData } = $props();
 
@@ -21,29 +22,9 @@
 	let temperature = $state('');
 	let source = $state('manual');
 
+	let uploaded = $state(JSON.parse(page.url.searchParams.get('upload') || 'false'));
+
 	let customMetrics = $state([{ order: 1, key: '', value: '', unit: '' }]);
-	let pdf: File | null = $state(null);
-	let pdfName = $state('');
-	let pdfUrl = $state('');
-
-	async function handlePdfUpload() {
-		if (!pdf) return;
-		const userId = user.id;
-		const filePath = `pdfs/${userId}-${Date.now()}.pdf`;
-
-		const { error: uploadError } = await supabase.storage
-			.from('health-pdfs')
-			.upload(filePath, pdf, { upsert: true });
-
-		if (uploadError) {
-			alert('PDF Upload Failed');
-			return;
-		}
-
-		const { data } = supabase.storage.from('health-pdfs').getPublicUrl(filePath);
-		pdfUrl = data.publicUrl;
-		source = 'uploaded';
-	}
 
 	function addMetric() {
 		customMetrics.push({ order: customMetrics?.length + 1, key: '', value: '', unit: '' });
@@ -118,7 +99,7 @@
 
 								const emailResult = await emailRes.json();
 
-								if (emailResult.message = 'Email sent successfully!') {
+								if ((emailResult.message = 'Email sent successfully!')) {
 									toastStore.add('success', 'AI Health Report emailed.');
 								}
 							}
@@ -129,6 +110,54 @@
 				});
 			}
 		};
+	};
+
+	let pdf: File | null = $state(null);
+	let pdfName = $state('');
+	let pdfUrl = $state('');
+	let uploading = $state(false);
+
+	async function handlePdfUpload() {
+		if (!pdf || !user?.id) {
+			alert('Missing PDF file or user ID');
+			return;
+		}
+
+		uploading = true;
+		const filePath = `pdfs/${user?.id}-${Date.now()}.pdf`;
+
+		const { error: uploadError } = await supabase.storage
+			.from('health-pdfs')
+			.upload(filePath, pdf, {
+				upsert: true,
+				contentType: 'application/pdf'
+			});
+
+		if (uploadError) {
+			alert('❌ PDF Upload Failed');
+			console.error(uploadError.message);
+			uploading = false;
+			return;
+		}
+
+		const { data } = supabase.storage.from('health-pdfs').getPublicUrl(filePath);
+		pdfUrl = data?.publicUrl || '';
+		pdfName = pdf.name;
+		source = 'uploaded';
+		uploading = false;
+	}
+
+	const parsePDF = async () => {
+		const res = await fetch('/api/pdf-to-text', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				url: 'https://zutudrfpiiewreytnvmm.supabase.co/storage/v1/object/public/health-pdfs/pdfs/c9793963-075d-4d30-b8b2-7bb0eecd19c6-1753887179771.pdf'
+			})
+		});
+
+		const data = await res.json();
+		console.log(data.text);
 	};
 </script>
 
@@ -146,6 +175,32 @@
 		</h1>
 		<p class=" text-lg text-[#7f7f7f]">Create new metrics here.</p>
 	</div>
+	<div class="w-full">
+		<button onclick={parsePDF} type="button" class="btn btn-primary">parsePDF</button>
+	</div>
+	<!-- PDF Upload UI -->
+	<form onsubmit={handlePdfUpload} class="mb-4">
+		<p class=" mb-[3px] text-sm text-[#7f7f7f]">Upload Health Matric PDF</p>
+		<div class="join w-full max-w-xl">
+			<input
+				type="file"
+				accept="application/pdf"
+				onchange={(e: any) => (pdf = e.target.files?.[0] ?? null)}
+				class="file-input"
+			/>
+			<button type="submit" class="btn join-item rounded-r-full" disabled={uploading}>
+				{uploading ? 'Uploading...' : 'Upload PDF'}
+			</button>
+		</div>
+
+		{#if pdfUrl}
+			<div class="mt-4">
+				<p class="text-green-600">✅ Uploaded: {pdfName}</p>
+				<a href={pdfUrl} target="_blank" class="text-blue-500 underline">View PDF</a>
+			</div>
+		{/if}
+	</form>
+
 	<form
 		method="post"
 		enctype="multipart/form-data"
