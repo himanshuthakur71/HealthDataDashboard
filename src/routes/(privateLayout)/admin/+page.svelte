@@ -22,7 +22,7 @@
 				</div>
 			</a>
 
-			<!-- <a
+			<a
 				href="/reports"
 				class=" flex max-w-[260px] items-center gap-4 p-4 shadow-md hover:bg-base-300"
 			>
@@ -31,7 +31,7 @@
 					<span class=" font-bold text-secondary">{data.reports.length}</span>
 					<span>Total Reports</span>
 				</div>
-			</a> -->
+			</a>
 		</div>
 
 		<div class="w-full">
