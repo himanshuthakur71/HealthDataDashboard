@@ -1,0 +1,15 @@
+
+
+Patient Name: Himanshu Thakur   
+Date: July 25, 2025   
+ 
+Blood Pressure: 128/84 mmHg   
+Heart Rate: 76 bpm   
+Blood Glucose: 92 mg/dL   
+Body Weight: 71.5 kg   
+Temperature: 36.9 °C   
+ 
+Custom Metrics:   
+- Oxygen Saturation: 98 %   
+- Sleep Duration: 7.2 hours   
+- Stress Level: Low   
