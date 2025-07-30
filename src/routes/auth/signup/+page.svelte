@@ -204,7 +204,7 @@
 							</div>
 						</form>
 
-						<!-- <div class="relative py-4">
+						<div class="relative py-4">
 							<div class="absolute inset-0 flex items-center">
 								<span class="w-full border-t border-accent"></span>
 							</div>
@@ -213,9 +213,9 @@
 							</div>
 						</div>
 
-						<form action="">
-							<button type="button" class=" btn w-full">Google</button>
-						</form> -->
+						<form method="POST" action="/auth/login?/google" use:enhance>
+							<button type="submit" class=" btn w-full bg-red-400">Google</button>
+						</form>
 					</div>
 				</div>
 			{/if}

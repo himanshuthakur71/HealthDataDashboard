@@ -23,4 +23,24 @@ export const actions: Actions = {
       }
     }
   },
+
+  google: async ({ url, locals: { supabase } }) => {
+
+    // Start the Google OAuth flow
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${url.origin}/auth/callback` // this must match the redirect URL in Supabase
+      }
+    })
+
+    if (error) {
+      console.error(error)
+      return fail(400, { error: error.message });
+    }
+
+    // Redirect the user to Google's OAuth URL
+    throw redirect(302, data.url)
+  }
+
 }
