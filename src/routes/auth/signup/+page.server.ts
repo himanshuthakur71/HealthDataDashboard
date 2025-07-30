@@ -8,6 +8,7 @@ export const actions: Actions = {
     const first_name = formData.get('first_name') as string
     const last_name = formData.get('last_name') as string
     const email = formData.get('email') as string
+    const country = formData.get('country') as string
     const password = formData.get('password') as string
     const confirm_password = formData.get('confirm_password') as string
 
@@ -21,10 +22,12 @@ export const actions: Actions = {
           first_name,
           last_name,
           email,
-          role: 'patient',
+          role: 'patient', // 'patient' or 'admin' only if you're allowing it
           dob: '',
           gender: '',
-          avatar_url: ''
+          country: country,
+          phone_number: '',
+          avatar_url: '',
         }
       }
     })

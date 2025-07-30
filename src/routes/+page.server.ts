@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ locals: { user } }) => {
     if (user?.id && user.user_metadata.role == 'patient') {
         throw redirect(302, '/dashboard');
     }
-    if (user?.id && user.user_metadata.role == 'provider') {
+    if (user?.id && user.user_metadata.role == 'admin') {
         throw redirect(302, '/admin');
     }
 

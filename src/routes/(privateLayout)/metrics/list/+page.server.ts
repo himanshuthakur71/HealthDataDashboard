@@ -21,7 +21,6 @@ export const load: PageServerLoad = async ({ locals: { supabase, user }, url, de
 	let query = supabase
 		.from('health_metrics')
 		.select('*')
-		.eq('user_id', user.id)
 		.order('created_at', { ascending: false });
 
 	if (range > 0) {

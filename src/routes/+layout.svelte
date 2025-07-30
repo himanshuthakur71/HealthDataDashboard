@@ -6,6 +6,8 @@
 	import '../app.css';
 	import NProgress from 'nprogress';
 	import { navigating, page } from '$app/state';
+	import Toast from '$lib/components/Toast.svelte';
+	
 
 	let { data, children } = $props();
 	let { session, supabase } = $derived(data);
@@ -33,7 +35,6 @@
 		});
 		return () => data.subscription.unsubscribe();
 	});
-
 </script>
 
 <div>
@@ -45,3 +46,9 @@
 <main>
 	{@render children()}
 </main>
+
+
+	
+		<Toast />
+
+

@@ -1,54 +1,15 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { goto, invalidate } from '$app/navigation';
-	import { deleteAvatar } from '$lib/helpers/deleteAvatar.js';
-	import { uploadAvatarWithProgress } from '$lib/helpers/uploadAvatar.js';
+	import { countries } from '$lib/json/countries.json';
 	import { fade } from 'svelte/transition';
-	import type { PageProps } from './$types';
+	import type { ActionData } from './$types';
+	import { uploadAvatarWithProgress } from '$lib/helpers/uploadAvatar';
+	import { deleteAvatar } from '$lib/helpers/deleteAvatar';
 
-	let { data }: PageProps = $props();
-	let { supabase } = $derived(data);
+	let { data, form }: { data: any; form: ActionData } = $props();
 
-	let modalSucess = $state(false);
-
-	let formFields = $state({
-		first_name: data?.user?.user_metadata?.first_name || '',
-		last_name: data?.user?.user_metadata?.last_name || '',
-		email: data?.user?.user_metadata?.email || '',
-		gender: data?.user?.user_metadata?.gender || '',
-		dob: data?.user?.user_metadata?.dob || '',
-		
-	});
-
-	const updateUser = async () => {
-		// 1. Update auth.users metadata
-		const { data: userData, error: updateError } = await supabase.auth.updateUser({
-			data: formFields
-		});
-
-		if (updateError) {
-			console.error('Update error:', updateError);
-			return;
-		}
-
-		// 2. Call the sync_user_profile RPC function
-		const user = userData?.user;
-
-		if (!user) {
-			console.error('No user returned from update');
-			return;
-		}
-
-		const { error: rpcError } = await supabase.rpc('sync_user_profile', {
-			user_id: user.id
-		});
-
-		if (rpcError) {
-			console.error('RPC sync error:', rpcError);
-		} else {
-			modalSucess = true;
-			// console.log('Profile synced to `profiles` table.');
-		}
-	};
+	const { user, supabase } = $derived(data);
 
 	let file: File | null = $state(null);
 	let previewUrl: string | null = $state(null);
@@ -127,9 +88,8 @@
 
 		try {
 			await deleteAvatar(avatarUrl, userId, supabase);
-			alert('Avatar deleted');
-			await supabase.rpc('sync_user_profile', { user_id: user.id });
 			invalidate('supabase:auth');
+			alert('Avatar deleted');
 		} catch (e) {
 			console.error(e);
 			alert('Failed to delete avatar');
@@ -166,12 +126,18 @@
 				<h1 class=" mt-[3px] border-b-[3px] border-secondary pb-[8px] text-2xl font-bold">
 					<span>Profile</span>
 					<span class=" text-secondary">|</span>
-					<span class=" text-[#7f7f7f]">{data?.user?.user_metadata?.first_name} {data?.user?.user_metadata?.last_name}</span>
+					<span class=" text-[#7f7f7f]"
+						>{user?.user_metadata?.first_name} {user?.user_metadata?.last_name}</span
+					>
 				</h1>
 				<p class=" text-lg text-[#7f7f7f]">Manage your profile details here.</p>
 			</div>
 
-			<form onsubmit={updateUser}>
+			{#if form?.error}
+				<p class="text-error">{form.error}</p>
+			{/if}
+
+			<form method="post" enctype="multipart/form-data" use:enhance action="?/update">
 				<div class="mb-[41px]">
 					<svg
 						xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -193,7 +159,9 @@
 					<p class=" text-xl font-bold text-primary">EDIT DETAILS</p>
 					<span class="mt-[6px] block h-[3px] w-[48px] bg-primary"></span>
 				</div>
-				<div class="lg:grid w-full max-w-[820px] lg:grid-cols-[1fr_auto] gap-x-[45px] flex flex-col-reverse gap-y-8">
+				<div
+					class="flex w-full max-w-[820px] flex-col-reverse gap-x-[45px] gap-y-8 lg:grid lg:grid-cols-[1fr_auto] lg:items-start"
+				>
 					<div class="w-full">
 						<div class="grid grid-cols-1 gap-4">
 							<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -205,7 +173,7 @@
 										placeholder="First name"
 										class="input w-full"
 										required
-										bind:value={formFields.first_name}
+										value={user?.user_metadata?.first_name}
 									/>
 								</label>
 								<label class="floating-label">
@@ -216,22 +184,40 @@
 										placeholder="last name"
 										class="input w-full"
 										required
-										bind:value={formFields.last_name}
+										value={user?.user_metadata?.last_name}
 									/>
 								</label>
 							</div>
-							<label class="floating-label">
-								<span>Email</span>
-								<input
-									disabled
-									name="email"
-									type="email"
-									placeholder="Email"
-									class="input w-full"
-									required
-									bind:value={formFields.email}
-								/>
-							</label>
+							<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+								<label class="floating-label">
+									<span>Email</span>
+									<input
+										disabled
+										name="email"
+										type="email"
+										placeholder="Email"
+										class="input w-full"
+										required
+										value={user?.user_metadata?.email}
+									/>
+								</label>
+
+								<label class="floating-label">
+									<span>Country</span>
+									<select
+										class="select w-full"
+										name="country"
+										required
+										value={user?.user_metadata?.country}
+									>
+										<option value="">Select</option>
+										{#each countries as item}
+											<option value={item.code}>{item?.name}</option>
+										{/each}
+									</select>
+								</label>
+							</div>
+
 							<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 								<label class="floating-label">
 									<span>Gender</span>
@@ -239,7 +225,7 @@
 										class="select w-full"
 										name="gender"
 										required
-										bind:value={formFields.gender}
+										value={user?.user_metadata?.gender}
 									>
 										<option value="">Select</option>
 										<option value="male">Male</option>
@@ -256,26 +242,38 @@
 										placeholder="Date of birth"
 										class="input w-full"
 										required
-										bind:value={formFields.dob}
+										value={user?.user_metadata?.dob}
 									/>
 								</label>
 							</div>
+
+							<label class="floating-label">
+								<span>Phone Number</span>
+								<input
+									name="phone_number"
+									type="text"
+									placeholder="Phone Number"
+									class="input w-full"
+									required
+									value={user?.user_metadata?.phone_number}
+								/>
+							</label>
 						</div>
 					</div>
 					<div class="flex items-center gap-4">
-						{#if data?.session?.user?.user_metadata?.avatar_url || previewUrl}
+						{#if user?.user_metadata?.avatar_url || previewUrl}
 							<div
 								class="relative flex h-[140px] w-[140px] items-center justify-center overflow-hidden rounded-full bg-base-300 shadow hover:bg-base-200"
 							>
 								<img
-									src={data?.session?.user?.user_metadata?.avatar_url || previewUrl}
+									src={user?.user_metadata?.avatar_url || previewUrl}
 									alt="Preview"
 									class="h-[140px] w-[140px] rounded-full object-cover"
 								/>
 
-								{#if data?.session?.user?.user_metadata?.avatar_url}
+								{#if user?.user_metadata?.avatar_url}
 									<button
-										onclick={handleDelete}
+									onclick="{handleDelete}"
 										aria-label="delete"
 										type="button"
 										class=" btn absolute z-[1] btn-circle btn-lg btn-error"
@@ -337,6 +335,7 @@
 								</svg>
 							</label>
 						{/if}
+
 						<p class=" text-lg font-bold text-primary">
 							Profile <br />
 							photo
@@ -355,7 +354,7 @@
 	</div>
 </section>
 
-{#if modalSucess}
+{#if form?.success}
 	<dialog id="my_modal_1" class="modal-open modal">
 		<div class="modal-box" transition:fade>
 			<figure class="mx-auto mb-[7px] flex h-[50px] w-[45px] items-center justify-center">

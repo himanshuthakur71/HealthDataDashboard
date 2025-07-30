@@ -1,5 +1,5 @@
 {
-	"name": "healthdatadashboard",
+	"name": "healthai",
 	"private": true,
 	"version": "0.0.1",
 	"type": "module",
@@ -22,12 +22,12 @@
 		"@tailwindcss/vite": "^4.0.0",
 		"@types/nodemailer": "^6.4.17",
 		"@types/nprogress": "^0.2.3",
-		"@types/pdf-parse": "^1.1.5",
-		"daisyui": "^5.0.47",
+		"daisyui": "^5.0.48",
 		"eslint": "^9.18.0",
 		"eslint-config-prettier": "^10.0.1",
 		"eslint-plugin-svelte": "^3.0.0",
 		"globals": "^16.0.0",
+		"nprogress": "^0.2.0",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.3",
 		"prettier-plugin-tailwindcss": "^0.6.11",
@@ -42,12 +42,10 @@
 	"dependencies": {
 		"@google/generative-ai": "^0.24.1",
 		"@supabase/ssr": "^0.6.1",
-		"@supabase/supabase-js": "^2.52.1",
+		"@supabase/supabase-js": "^2.53.0",
 		"chart.js": "^4.5.0",
 		"date-fns": "^4.1.0",
 		"marked": "^16.1.1",
-		"nodemailer": "^7.0.5",
-		"nprogress": "^0.2.0",
-		"pdf-parse": "^1.1.1"
+		"nodemailer": "^7.0.5"
 	}
 }

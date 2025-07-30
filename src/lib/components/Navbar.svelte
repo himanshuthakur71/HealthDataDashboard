@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/state';
-
-	// console.log(page?.data?.session?.user?.id)
 </script>
 
 <header class="w-full bg-base-100 shadow-sm">
@@ -12,16 +10,20 @@
 			</div>
 
 			<div class="navbar-end flex items-center gap-4">
-				{#if page?.data?.session?.user?.id}
-
-				<p class="hidden md:block"><a href="/dashboard/profile" class=" text-lg font-semibold text-secondary hover:underline">{page?.data?.session?.user?.user_metadata?.first_name} {page?.data?.session?.user?.user_metadata?.last_name}</a></p>
+				{#if page?.data?.user?.id}
+					<p class="hidden md:block">
+						<a href="/profile" class=" text-lg font-semibold text-secondary hover:underline"
+							>{page?.data?.user?.user_metadata?.first_name}
+							{page?.data?.user?.user_metadata?.last_name}</a
+						>
+					</p>
 					<div class="dropdown dropdown-end">
 						<div tabindex="0" role="button" class="btn avatar btn-circle btn-ghost">
 							<div class="w-10 rounded-full">
-								
 								<img
 									alt="xxUserName"
-									src="{page?.data?.session?.user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${page?.data?.session?.user?.user_metadata?.first_name}+${page?.data?.session?.user?.user_metadata?.last_name}&background=random`}"
+									src={page?.data?.user?.user_metadata?.avatar_url ||
+										`https://ui-avatars.com/api/?name=${page?.data?.user?.user_metadata?.first_name}+${page?.data?.user?.user_metadata?.last_name}&background=random`}
 								/>
 							</div>
 						</div>
@@ -29,14 +31,11 @@
 							class="dropdown-content menu z-1 mt-3 w-52 menu-sm rounded-box bg-base-100 p-2 shadow"
 						>
 							<li>
-								<a href="/dashboard/profile"> Profile </a>
+								<a href="/profile"> Profile </a>
 							</li>
 							<li>
-								<a href="/metrics" >Metrics</a>
+								<a href="/metrics/list">Metrics</a>
 							</li>
-							<!-- <li>
-								<a href="/metrics/new" >Create Metrics</a>
-							</li> -->
 							<li>
 								<a href="/reports">Reports</a>
 							</li>

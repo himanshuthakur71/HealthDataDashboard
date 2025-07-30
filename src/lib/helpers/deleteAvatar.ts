@@ -19,7 +19,4 @@ export async function deleteAvatar(
 
 	// 2. Clear avatar_url from auth metadata
 	await supabase.auth.updateUser({ data: { avatar_url: null } });
-
-	// 3. Sync with profiles table
-	await supabase.rpc('sync_user_profile', { user_id: userId });
 }

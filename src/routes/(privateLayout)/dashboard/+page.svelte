@@ -5,6 +5,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import type { PageProps } from './$types';
+	import { generateHealthScore } from '$lib/helpers/generateHealthScore';
 
 	let { data }: PageProps = $props();
 	const metric = data.latestMetric;
@@ -14,7 +15,8 @@
 	const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']; // Static for demo
 	const values = [metric?.heart_rate, 74, 71, 70, 69]; // Simulated weekly values
 
-	let summary = {
+	// Extract metric summary with fallback values
+	const summary = {
 		heart_rate: metric?.heart_rate ?? 0,
 		blood_pressure: {
 			systolic: metric?.systolic ?? 0,
@@ -25,16 +27,8 @@
 		weight: metric?.weight ?? 0
 	};
 
-	// Basic score example — customize as needed
-	let healthScore = Math.min(
-		100,
-		Math.round(
-			100 -
-				Math.abs(120 - summary.blood_pressure.systolic) -
-				Math.abs(80 - summary.blood_pressure.diastolic) -
-				Math.abs(72 - summary.heart_rate)
-		)
-	);
+	// Final health score between 0 and 100
+	const healthScore = generateHealthScore(metric);
 
 	let selectedRange = $state(page.url.searchParams.get('range') || '7');
 	const ranges = ['7', '30', '60', '90', '120'];
@@ -104,7 +98,7 @@
 					<h2 class=" text-xl font-semibold text-primary">Quick Links</h2>
 					<div class="lg: flex w-full flex-wrap gap-6 py-4">
 						<a
-							href="/metrics"
+							href="/metrics/list"
 							class=" flex max-w-[260px] items-center gap-4 p-4 shadow-md hover:bg-base-300"
 						>
 							<div class=" text-5xl">📊</div>
@@ -115,7 +109,7 @@
 						</a>
 
 						<a
-							href="/reports"
+							href="/reports/list"
 							class=" flex max-w-[260px] items-center gap-4 p-4 shadow-md hover:bg-base-300"
 						>
 							<div class=" text-5xl">📋</div>

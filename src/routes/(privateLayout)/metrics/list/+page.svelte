@@ -5,7 +5,7 @@
 
 	let { data }: PageProps = $props();
 
-	// console.log(data)
+	console.log(data?.metrics)
 
 	function formatDate(dateStr: string) {
 		return new Date(dateStr).toLocaleDateString();

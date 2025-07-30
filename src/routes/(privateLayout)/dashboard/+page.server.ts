@@ -5,7 +5,7 @@ import { redirect } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ url, locals: { supabase, user } }) => {
 
-	if (user?.id && user.user_metadata.role == 'provider') {
+	if (user?.id && user.user_metadata.role == 'admin') {
 			throw redirect(302, '/admin');
 	}
 
@@ -21,7 +21,6 @@ export const load: PageServerLoad = async ({ url, locals: { supabase, user } }) 
 	const { data: metrics, error: metricsError } = await supabase
 		.from('health_metrics')
 		.select('*')
-		.eq('user_id', user.id)
 		.gte('created_at', fromDate.toISOString())
 		.order('created_at', { ascending: false });
 
@@ -33,7 +32,7 @@ export const load: PageServerLoad = async ({ url, locals: { supabase, user } }) 
 	const { count: totalMetrics, error: countMetricsError } = await supabase
 		.from('health_metrics')
 		.select('*', { count: 'exact', head: true })
-		.eq('user_id', user.id);
+
 
 	if (countMetricsError) {
 		console.error('Error getting total metrics count:', countMetricsError.message);
@@ -43,7 +42,6 @@ export const load: PageServerLoad = async ({ url, locals: { supabase, user } }) 
 	const { count: totalReports, error: countReportsError } = await supabase
 		.from('ai_reports')
 		.select('*', { count: 'exact', head: true })
-		.eq('user_id', user.id);
 
 	if (countReportsError) {
 		console.error('Error getting total reports count:', countReportsError.message);

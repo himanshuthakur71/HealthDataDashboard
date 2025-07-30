@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { fade, fly } from 'svelte/transition';
 	import type { ActionData } from './$types';
+	import { countries } from '$lib/json/countries.json';
 
 	let { form }: { form: ActionData } = $props();
 
@@ -17,7 +18,7 @@
 	});
 </script>
 
-<section class="overflow-x-hidden  pl-[5px]">
+<section class="overflow-x-hidden pl-[5px]">
 	{#if showForm}
 		<div class="w-full">
 			{#if form?.success}
@@ -31,7 +32,7 @@
 						Please check your email and follow instructions.
 					</p>
 
-					<a href="/" class=" btn btn-secondary btn-wide max-w-[120px] mt-6 text-lg font-bold">
+					<a href="/" class=" btn mt-6 btn-wide max-w-[120px] text-lg font-bold btn-secondary">
 						Close
 					</a>
 				</div>
@@ -82,16 +83,25 @@
 										/>
 									</label>
 								</div>
-								<label>
-									<input
-										name="email"
-										type="email"
-										placeholder="Email"
-										class="input w-full"
-										required
-									/>
-								</label>
-
+								<div class="grid w-full grid-cols-2 gap-4">
+									<label>
+										<input
+											name="email"
+											type="email"
+											placeholder="Email"
+											class="input w-full"
+											required
+										/>
+									</label>
+									<label>
+										<select class="select w-full" required name="country" value="IN">
+											<option value="">Select</option>
+											{#each countries as item}
+												<option value={item.code}>{item?.name}</option>
+											{/each}
+										</select>
+									</label>
+								</div>
 								<div class="grid w-full grid-cols-2 gap-4">
 									<label>
 										<input

@@ -9,6 +9,8 @@ export const actions: Actions = {
     const password = formData.get('password') as string
 
     const { error, data: user_data } = await supabase.auth.signInWithPassword({ email, password })
+
+    // console.log(user_data)
     if (error) {
       console.error(error)
       return fail(400, { email, password, error: error.message });
@@ -16,7 +18,7 @@ export const actions: Actions = {
       if (user_data?.user.user_metadata.role == 'patient') {
         throw redirect(302, '/dashboard');
       }
-      if (user_data?.user.user_metadata.role == 'provider') {
+      if (user_data?.user.user_metadata.role == 'admin') {
         throw redirect(302, '/admin');
       }
     }
