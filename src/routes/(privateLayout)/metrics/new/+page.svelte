@@ -144,16 +144,14 @@
 		pdfUrl = data?.publicUrl || '';
 		pdfName = pdf.name;
 		source = 'uploaded';
+		parsePDF(pdfUrl)
 		uploading = false;
 	}
 
-	const parsePDF = async () => {
-		const res = await fetch('/api/pdf-to-text', {
-			method: 'POST',
+	const parsePDF = async (url: String) => {
+		const res = await fetch(`https://express-health-ai.vercel.app/api/pdf-to-text?url=${url}`, {
+			method: 'GET',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				url: 'https://zutudrfpiiewreytnvmm.supabase.co/storage/v1/object/public/health-pdfs/pdfs/c9793963-075d-4d30-b8b2-7bb0eecd19c6-1753887179771.pdf'
-			})
 		});
 
 		const data = await res.json();
@@ -174,9 +172,6 @@
 			<span class=" text-[#7f7f7f]">New</span>
 		</h1>
 		<p class=" text-lg text-[#7f7f7f]">Create new metrics here.</p>
-	</div>
-	<div class="w-full">
-		<button onclick={parsePDF} type="button" class="btn btn-primary">parsePDF</button>
 	</div>
 	<!-- PDF Upload UI -->
 	<form onsubmit={handlePdfUpload} class="mb-4">
