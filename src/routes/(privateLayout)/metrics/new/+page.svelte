@@ -149,7 +149,7 @@
 			const { data } = supabase.storage.from('health-pdfs').getPublicUrl(filePath);
 			pdfUrl = data?.publicUrl || '';
 			pdfName = pdf.name;
-
+			
 			// convert PDF to text
 			const pdfText = await parsePDF(pdfUrl);
 
@@ -171,7 +171,7 @@
 				blood_glucose = aiMetricJson?.metric?.blood_glucose || '';
 				weight = aiMetricJson?.metric?.weight || '';
 				temperature = aiMetricJson?.metric?.temperature || '';
-
+				source = aiMetricJson?.metric?.source || 'uploaded';
 				// customMetrics = aiMetric?.metric?.custom_metrics;
 			} else {
 				uploading = false;
@@ -316,6 +316,7 @@
 				</label>
 
 				<input type="hidden" name="source" bind:value={source} />
+				<input type="hidden" name="pdf_url" bind:value={pdfUrl}>
 			</div>
 
 			<div class="relative py-4">
